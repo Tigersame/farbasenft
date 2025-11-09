@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="splash-bg" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#020617" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="splash-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+    <filter id="splash-blur">
+      <feGaussianBlur stdDeviation="160" />
+    </filter>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#splash-bg)" />
+  <g filter="url(#splash-blur)">
+    <circle cx="200" cy="420" r="260" fill="#6366f144" />
+    <circle cx="880" cy="920" r="320" fill="#a855f744" />
+    <circle cx="540" cy="1500" r="360" fill="#14b8a644" />
+  </g>
+  <rect
+    x="120"
+    y="640"
+    width="840"
+    height="640"
+    rx="72"
+    fill="#020617dd"
+    stroke="url(#splash-glow)"
+    stroke-width="4"
+  />
+  <text
+    x="204"
+    y="880"
+    fill="#f8fafc"
+    font-size="96"
+    font-family="'Poppins', 'Segoe UI', sans-serif"
+  >
+    farbasenft
+  </text>
+  <text
+    x="204"
+    y="980"
+    fill="#cbd5f5"
+    font-size="40"
+    font-family="'Poppins', 'Segoe UI', sans-serif"
+  >
+    Digital art, re-imagined for Base.
+  </text>
+  <text
+    x="204"
+    y="1080"
+    fill="#cbd5f5"
+    font-size="32"
+    font-family="'Poppins', 'Segoe UI', sans-serif"
+  >
+    Swipe to collect, bid, and curate alongside visionary artists.
+  </text>
+  <rect
+    x="204"
+    y="1140"
+    width="360"
+    height="84"
+    rx="42"
+    fill="url(#splash-glow)"
+    opacity="0.9"
+  />
+  <text
+    x="244"
+    y="1194"
+    fill="#020617"
+    font-size="36"
+    font-family="'Poppins', 'Segoe UI', sans-serif"
+  >
+    Enter the gallery
+  </text>
+</svg>
