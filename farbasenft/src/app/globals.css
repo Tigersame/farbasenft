@@ -1,8 +1,12 @@
+/* Ensure Inter font is loaded first */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@import "@coinbase/onchainkit/styles.css";
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +16,399 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Force dark mode - removed media query to always use dark theme */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Wallet Modal Theme Overrides */
+[data-onchainkit-wallet] {
+  --ok-color-background: #0f172a;
+  --ok-color-foreground: #f1f5f9;
+  --ok-color-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Remove blur from wallet modal backdrop */
+[data-onchainkit-wallet] [data-radix-portal] > div {
+  backdrop-filter: none !important;
+}
+
+/* Wallet modal styling */
+[data-onchainkit-wallet] [role="dialog"] {
+  background: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Swap Component Dark Mode Overrides */
+/* Target the swap component container and all children */
+div:has([data-onchainkit-swap]),
+[data-onchainkit-swap],
+[data-onchainkit-swap] * {
+  --ok-color-background: #0f172a !important;
+  --ok-color-foreground: #f1f5f9 !important;
+  --ok-color-border: rgba(255, 255, 255, 0.1) !important;
+  --ok-color-surface: #1e293b !important;
+  --ok-color-surface-secondary: #334155 !important;
+}
+
+/* Swap component wrapper - ensure dark background */
+div:has([data-onchainkit-swap]) > div,
+[data-onchainkit-swap] > div {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Swap card/container backgrounds */
+[data-onchainkit-swap] [class*="card"],
+[data-onchainkit-swap] [class*="Card"],
+[data-onchainkit-swap] [class*="container"],
+[data-onchainkit-swap] [class*="Container"] {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Swap input fields and form elements */
+[data-onchainkit-swap] input,
+[data-onchainkit-swap] [class*="input"],
+[data-onchainkit-swap] [class*="Input"],
+[data-onchainkit-swap] [class*="field"],
+[data-onchainkit-swap] [class*="Field"] {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+[data-onchainkit-swap] input::placeholder {
+  color: rgba(241, 245, 249, 0.5) !important;
+}
+
+/* Swap buttons - primary action */
+[data-onchainkit-swap] button[type="submit"],
+[data-onchainkit-swap] button[class*="primary"],
+[data-onchainkit-swap] button[class*="Primary"],
+[data-onchainkit-swap] [class*="swap-button"],
+[data-onchainkit-swap] [class*="SwapButton"] {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+[data-onchainkit-swap] button[type="submit"]:hover,
+[data-onchainkit-swap] button[class*="primary"]:hover {
+  background: #2563eb !important;
+}
+
+/* Swap buttons - secondary/icon buttons */
+[data-onchainkit-swap] button:not([type="submit"]):not([class*="primary"]) {
+  background: transparent !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Swap text colors - ensure all text is visible */
+[data-onchainkit-swap] p,
+[data-onchainkit-swap] span:not([class*="icon"]):not([class*="Icon"]),
+[data-onchainkit-swap] label,
+[data-onchainkit-swap] h1,
+[data-onchainkit-swap] h2,
+[data-onchainkit-swap] h3,
+[data-onchainkit-swap] h4,
+[data-onchainkit-swap] div {
+  color: #f1f5f9 !important;
+}
+
+/* Swap select/dropdown menus */
+[data-onchainkit-swap] select,
+[data-onchainkit-swap] [class*="select"],
+[data-onchainkit-swap] [class*="Select"],
+[data-onchainkit-swap] [role="combobox"],
+[data-onchainkit-swap] [class*="dropdown"],
+[data-onchainkit-swap] [class*="Dropdown"] {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Swap token selector/display */
+[data-onchainkit-swap] [class*="token"],
+[data-onchainkit-swap] [class*="Token"] {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+/* Ensure white backgrounds are overridden */
+[data-onchainkit-swap] [style*="background: white"],
+[data-onchainkit-swap] [style*="background: #fff"],
+[data-onchainkit-swap] [style*="background: #ffffff"],
+[data-onchainkit-swap] [class*="bg-white"] {
+  background: #0f172a !important;
+}
+
+/* Override any light text colors */
+[data-onchainkit-swap] [style*="color: black"],
+[data-onchainkit-swap] [style*="color: #000"],
+[data-onchainkit-swap] [class*="text-black"],
+[data-onchainkit-swap] [class*="text-gray-900"] {
+  color: #f1f5f9 !important;
+}
+
+/* General swap portal section dark mode - target the section containing swap */
+#swap-portal,
+#swap-portal * {
+  color: #f1f5f9 !important;
+}
+
+/* Override any white/light backgrounds in swap portal */
+#swap-portal [class*="bg-white"],
+#swap-portal [style*="background: white"],
+#swap-portal [style*="background: #fff"],
+#swap-portal [style*="background: #ffffff"],
+#swap-portal [class*="bg-gray-50"],
+#swap-portal [class*="bg-gray-100"] {
+  background: #0f172a !important;
+}
+
+/* Ensure swap inputs and form elements are dark */
+#swap-portal input,
+#swap-portal textarea,
+#swap-portal select {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Swap portal buttons */
+#swap-portal button {
+  color: #ffffff !important;
+}
+
+/* Override any card/container backgrounds in swap portal */
+#swap-portal [class*="card"],
+#swap-portal [class*="Card"],
+#swap-portal [class*="panel"],
+#swap-portal [class*="Panel"] {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* COMPREHENSIVE SWAP PORTAL DARK MODE - Force all elements to dark */
+#swap-portal {
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Force all divs in swap portal to inherit dark colors */
+#swap-portal div:not([class*="bg-"]):not([style*="background"]) {
+  color: #f1f5f9 !important;
+}
+
+/* Override any element with white or light background */
+#swap-portal div[style*="background"],
+#swap-portal div[class*="bg-"],
+#swap-portal section,
+#swap-portal article,
+#swap-portal aside,
+#swap-portal main {
+  background: #0f172a !important;
+  background-color: #0f172a !important;
+}
+
+/* All text elements in swap portal */
+#swap-portal p,
+#swap-portal span,
+#swap-portal label,
+#swap-portal h1,
+#swap-portal h2,
+#swap-portal h3,
+#swap-portal h4,
+#swap-portal h5,
+#swap-portal h6,
+#swap-portal li,
+#swap-portal td,
+#swap-portal th,
+#swap-portal a {
+  color: #f1f5f9 !important;
+}
+
+/* All form elements */
+#swap-portal input[type="text"],
+#swap-portal input[type="number"],
+#swap-portal input[type="email"],
+#swap-portal input[type="password"],
+#swap-portal input:not([type]),
+#swap-portal textarea,
+#swap-portal select {
+  background: #1e293b !important;
+  background-color: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+#swap-portal input::placeholder,
+#swap-portal textarea::placeholder {
+  color: rgba(241, 245, 249, 0.5) !important;
+}
+
+/* All buttons in swap portal */
+#swap-portal button {
+  background: #3b82f6 !important;
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#swap-portal button:hover,
+#swap-portal button:focus {
+  background: #2563eb !important;
+  background-color: #2563eb !important;
+}
+
+#swap-portal button[disabled] {
+  background: #334155 !important;
+  background-color: #334155 !important;
+  opacity: 0.5 !important;
+}
+
+/* Dropdowns and selects */
+#swap-portal select,
+#swap-portal [role="combobox"],
+#swap-portal [role="listbox"],
+#swap-portal [role="option"] {
+  background: #1e293b !important;
+  background-color: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Links */
+#swap-portal a {
+  color: #60a5fa !important;
+}
+
+#swap-portal a:hover {
+  color: #93c5fd !important;
+}
+
+/* Tables */
+#swap-portal table {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#swap-portal th,
+#swap-portal td {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Lists */
+#swap-portal ul,
+#swap-portal ol {
+  color: #f1f5f9 !important;
+}
+
+#swap-portal li {
+  color: #f1f5f9 !important;
+}
+
+/* Icons and SVGs - ensure they're visible */
+#swap-portal svg {
+  fill: #f1f5f9 !important;
+  color: #f1f5f9 !important;
+}
+
+#swap-portal [class*="icon"],
+#swap-portal [class*="Icon"] {
+  color: #f1f5f9 !important;
+  fill: #f1f5f9 !important;
+}
+
+/* Override any inline styles */
+#swap-portal [style*="background-color: white"],
+#swap-portal [style*="background-color: #fff"],
+#swap-portal [style*="background-color: #ffffff"],
+#swap-portal [style*="background: white"],
+#swap-portal [style*="background: #fff"],
+#swap-portal [style*="background: #ffffff"],
+#swap-portal [style*="color: black"],
+#swap-portal [style*="color: #000"],
+#swap-portal [style*="color: #000000"] {
+  background-color: #0f172a !important;
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Override Tailwind classes that might be light */
+#swap-portal .bg-white,
+#swap-portal .bg-gray-50,
+#swap-portal .bg-gray-100,
+#swap-portal .bg-slate-50,
+#swap-portal .bg-slate-100,
+#swap-portal .bg-zinc-50,
+#swap-portal .bg-zinc-100 {
+  background-color: #0f172a !important;
+}
+
+#swap-portal .text-black,
+#swap-portal .text-gray-900,
+#swap-portal .text-slate-900,
+#swap-portal .text-zinc-900 {
+  color: #f1f5f9 !important;
+}
+
+/* Ensure any nested components are also dark */
+#swap-portal > *,
+#swap-portal > * > *,
+#swap-portal > * > * > * {
+  color: inherit !important;
+}
+
+/* Modal/dialog overlays in swap portal */
+#swap-portal [role="dialog"],
+#swap-portal [role="alertdialog"],
+#swap-portal [class*="modal"],
+#swap-portal [class*="Modal"],
+#swap-portal [class*="overlay"],
+#swap-portal [class*="Overlay"] {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Tooltips and popovers */
+#swap-portal [role="tooltip"],
+#swap-portal [class*="tooltip"],
+#swap-portal [class*="Tooltip"],
+#swap-portal [class*="popover"],
+#swap-portal [class*="Popover"] {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Progress bars and loading indicators */
+#swap-portal [role="progressbar"],
+#swap-portal [class*="progress"],
+#swap-portal [class*="Progress"],
+#swap-portal [class*="loading"],
+#swap-portal [class*="Loading"] {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+/* Badges and tags */
+#swap-portal [class*="badge"],
+#swap-portal [class*="Badge"],
+#swap-portal [class*="tag"],
+#swap-portal [class*="Tag"] {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }

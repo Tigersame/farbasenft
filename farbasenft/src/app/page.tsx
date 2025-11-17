@@ -1,309 +1,270 @@
+'use client';
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { Swap } from "@coinbase/onchainkit/swap";
+import type { Token } from "@coinbase/onchainkit/token";
+import { useXP } from "@/hooks/useXP";
+import { SwapWrapper } from "@/components/SwapWrapper";
 
-import { curatorNotes, heroDrop, trendingDrops } from "@/data/nfts";
+import { AppLayout } from "@/components/AppLayout";
+import { NFTActions } from "@/components/NFTActions";
+import { FarcasterShare } from "@/components/FarcasterShare";
+import { XPDisplay } from "@/components/XPDisplay";
+import { SBTClaim } from "@/components/SBTClaim";
+import { UserProfile } from "@/components/UserProfile";
+import { SIDEBAR_SECTION_EVENT } from "@/components/SidebarWithStore";
+import { curatorNotes, trendingDrops } from "@/data/nfts";
 
 const categoryStyles: Record<string, string> = {
-  auction: "bg-purple-500/10 text-purple-300 ring-1 ring-purple-400/30",
-  reserve: "bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-400/30",
-  "buy-now": "bg-sky-500/10 text-sky-300 ring-1 ring-sky-400/30",
+  auction: "bg-purple-500/10 text-purple-200 ring-1 ring-purple-400/40",
+  reserve: "bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-400/40",
+  "buy-now": "bg-sky-500/10 text-sky-200 ring-1 ring-sky-400/40",
 };
 
-export default function Home() {
+const ethToken: Token = {
+  name: "ETH",
+  symbol: "ETH",
+  address: "",
+  decimals: 18,
+  image: "https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png",
+  chainId: 8453,
+};
+
+const usdcToken: Token = {
+  name: "USDC",
+  symbol: "USDC",
+  address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+  decimals: 6,
+  image:
+    "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/44/2b/442b80bd16af0c0d9b22e03a16753823fe826e5bfd457292b55fa0ba8c1ba213-ZWUzYjJmZGUtMDYxNy00NDcyLTg0NjQtMWI4OGEwYjBiODE2",
+  chainId: 8453,
+};
+
+const degenToken: Token = {
+  name: "DEGEN",
+  symbol: "DEGEN",
+  address: "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+  decimals: 18,
+  image:
+    "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/3b/bf/3bbf118b5e6dc2f9e7fc607a6e7526647b4ba8f0bea87125f971446d57b296d2-MDNmNjY0MmEtNGFiZi00N2I0LWIwMTItMDUyMzg2ZDZhMWNm",
+  chainId: 8453,
+};
+
+const swapFromTokens = [ethToken, usdcToken, degenToken];
+const swapToTokens = [usdcToken, ethToken, degenToken];
+
+const swapHighlights = [
+  "Aggregator-backed routing across Base liquidity pools.",
+  "ETH, USDC, and community tokens like DEGEN supported out of the box.",
+];
+
+function SectionHeading({ title, eyebrow, description }: { title: string; eyebrow?: string; description?: string }) {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="relative isolate overflow-hidden">
-        <Image
-          src="/hero.svg"
-          alt="farbasenft hero"
-          fill
-          priority
-          className="object-cover opacity-40 mix-blend-screen"
-        />
-        <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 sm:px-8 lg:px-10">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/icon.svg" alt="farbasenft icon" width={36} height={36} />
-            <span className="text-lg font-semibold tracking-wide text-slate-100">
-              farbasenft
-            </span>
-          </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-300 md:flex">
-            <a className="transition hover:text-white" href="#drops">
-              Drops
-            </a>
-            <a className="transition hover:text-white" href="#curation">
-              Curation
-            </a>
-            <a className="transition hover:text-white" href="#collect">
-              Collect
-            </a>
-          </nav>
-          <button className="rounded-full bg-slate-100 px-6 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white">
-            Connect Wallet
-          </button>
-        </header>
-        <section className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 pb-20 pt-12 sm:px-8 lg:flex-row lg:items-end lg:px-10 lg:pt-20">
-          <div className="max-w-xl space-y-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
-              Featured Auction
-            </p>
-            <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
-              Curate the future of digital art.
-            </h1>
-            <p className="text-lg text-slate-300">
-              farbasenft showcases hand-selected releases inspired by the Foundation aesthetic - complete with reserve mechanics, live bidding, and collector storytelling ready for the Base mini app ecosystem.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="#drops"
-                className="rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-teal-400 px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-purple-500/30 transition hover:shadow-xl"
-              >
-                Explore Drops
-              </Link>
-              <a
-                href="https://docs.base.org/mini-apps/quickstart/create-new-miniapp"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-slate-500 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-300 hover:text-white"
-              >
-                Mini App Playbook
-              </a>
-            </div>
-            <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-slate-900/40 p-6 backdrop-blur">
-              <div className="flex items-center gap-3">
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${categoryStyles[heroDrop.category]}`}
-                >
-                  {heroDrop.category}
-                </span>
-                <span className="text-xs text-slate-400">Ends in {heroDrop.endsIn}</span>
-              </div>
-              <h2 className="text-2xl font-semibold">{heroDrop.title}</h2>
-              <p className="text-sm text-slate-300">by {heroDrop.artist}</p>
-              <p className="text-sm text-slate-400">{heroDrop.description}</p>
-              <div className="flex items-center gap-6 pt-2 text-sm">
-                <div>
-                  <p className="text-xs uppercase text-slate-400">Current Bid</p>
-                  <p className="text-base font-semibold text-white">{heroDrop.currentBid}</p>
-                </div>
-                <div>
-                  <p className="text-xs uppercase text-slate-400">Reserve</p>
-                  <p className="text-base font-semibold text-white">{heroDrop.reserve}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="relative flex-1">
-            <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 bg-slate-900/40 shadow-2xl shadow-purple-500/20 backdrop-blur">
-              <Image
-                src={heroDrop.image}
-                alt={heroDrop.title}
-                width={800}
-                height={1000}
-                className="h-full w-full object-cover"
-                priority
-              />
-            </div>
-          </div>
-        </section>
-      </div>
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-16 sm:px-8 lg:px-10">
-        <section id="drops" className="space-y-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-slate-500">
-                Trending this week
-              </p>
-              <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-                Live auctions & reserve drops
-              </h2>
-            </div>
-            <button className="w-full rounded-full border border-slate-600 px-5 py-2 text-sm font-semibold text-slate-200 transition hover:border-white hover:text-white sm:w-auto">
-              Create Artist Profile
-            </button>
-          </div>
-          <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
-            {trendingDrops.map((nft) => (
-              <article
-                key={nft.id}
-                className="group flex flex-col overflow-hidden rounded-3xl border border-white/5 bg-slate-900/60 transition hover:-translate-y-1 hover:border-white/20"
-              >
-                <div className="relative aspect-square overflow-hidden">
-                  <Image
-                    src={nft.image}
-                    alt={nft.title}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col gap-4 p-5">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${categoryStyles[nft.category]}`}
-                    >
-                      {nft.category}
-                    </span>
-                    <span className="text-xs text-slate-400">{nft.endsIn}</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">{nft.title}</h3>
-                    <p className="text-sm text-slate-400">by {nft.artist}</p>
-                  </div>
-                  <p className="text-sm text-slate-300 line-clamp-3">{nft.description}</p>
-                  <div className="mt-auto flex items-center justify-between rounded-2xl bg-slate-950/60 px-4 py-3 text-sm">
-                    <div>
-                      <p className="text-xs uppercase text-slate-500">Current</p>
-                      <p className="font-semibold text-white">{nft.currentBid}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs uppercase text-slate-500">Reserve</p>
-                      <p className="font-semibold text-white">{nft.reserve}</p>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-        <section
-          id="curation"
-          className="grid gap-6 overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-10 md:grid-cols-[2fr,3fr]"
-        >
-          <div className="space-y-5">
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">
-              Curation Studio
-            </p>
-            <h2 className="text-3xl font-semibold text-white">
-              Gallery-tier storytelling built in.
-            </h2>
-            <p className="text-base text-slate-300">
-              Drop pages go beyond the jpeg with process journals, artist notes, and live bid history. Use the Base mini app post composer to generate capsule embeds directly in Farcaster.
-            </p>
-            <ul className="space-y-4 text-sm text-slate-300">
-              <li className="flex items-start gap-3">
-                <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-purple-400" />
-                Mint with reserve pricing, timed auctions, and collector splits.
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-teal-400" />
-                Schedule unveil moments and unlock content for top bidders.
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-sky-400" />
-                Trigger notifications through Base App when reserves get met.
-              </li>
-            </ul>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {curatorNotes.map((note) => (
-              <div
-                key={note.title}
-                className="rounded-2xl border border-white/5 bg-gradient-to-br from-slate-900/80 via-slate-900/40 to-purple-900/20 p-6 backdrop-blur"
-              >
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
-                  {note.title}
-                </p>
-                <p className="mt-3 text-sm text-slate-200">{note.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="collect"
-          className="overflow-hidden rounded-3xl border border-indigo-400/20 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-slate-950/90 p-10"
-        >
-          <div className="grid gap-8 lg:grid-cols-2">
-            <div className="space-y-4">
-              <p className="text-sm uppercase tracking-[0.3em] text-indigo-200">
-                Base Mini App Ready
-              </p>
-              <h2 className="text-3xl font-semibold text-white">
-                Launch to the Base App audience in minutes.
-              </h2>
-              <p className="text-base text-slate-100/80">
-                Follow the Base mini app quickstart to host on Vercel, sign your manifest, and ship farbasenft to collectors directly within the Base app.
-              </p>
-              <div className="grid gap-3 text-sm text-slate-200">
-                <div className="rounded-2xl border border-indigo-400/30 bg-slate-950/60 p-4">
-                  <p className="font-semibold text-white">1. Configure manifest</p>
-                  <p className="text-slate-300">
-                    Update `minikit.config.ts` with your signed Base account association.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-purple-400/30 bg-slate-950/60 p-4">
-                  <p className="font-semibold text-white">2. Verify on Base</p>
-                  <p className="text-slate-300">
-                    Push to Vercel, then use the Base account association tool to verify.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-teal-400/30 bg-slate-950/60 p-4">
-                  <p className="font-semibold text-white">3. Cast your launch</p>
-                  <p className="text-slate-300">
-                    Share your drop URL in Farcaster to activate rich mini app embeds.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/70">
-              <Image
-                src="/splash.svg"
-                alt="farbasenft splash art"
-                width={1080}
-                height={1920}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-slate-950/70 px-6 py-4 backdrop-blur">
-                <div>
-                  <p className="text-xs uppercase text-slate-400">Base Mini App</p>
-                  <p className="text-sm font-semibold text-white">farbasenft</p>
-                </div>
-                <button className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-900">
-                  Preview
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer className="border-t border-white/5 bg-slate-950/90 py-10">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <div>
-            <p className="text-sm font-semibold text-slate-100">farbasenft</p>
-            <p className="text-xs text-slate-500">
-              Crafted as a Foundation-inspired Base mini app experience.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-4 text-xs text-slate-400">
-            <a
-              href="https://docs.base.org/mini-apps/quickstart/create-new-miniapp"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              Base mini app quickstart
-            </a>
-            <a
-              href="https://foundation.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              Reference inspiration
-            </a>
-            <a
-              href="https://docs.base.org/mini-apps/core-concepts/manifest"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              Manifest guide
-            </a>
-          </div>
-        </div>
-      </footer>
+    <div className="space-y-2">
+      {eyebrow ? <p className="text-xs uppercase tracking-[0.35em] text-slate-500">{eyebrow}</p> : null}
+      <h2 className="text-3xl font-semibold text-white">{title}</h2>
+      {description ? <p className="text-base text-slate-300">{description}</p> : null}
     </div>
+  );
+}
+
+export default function Page() {
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handler = (event: Event) => {
+      const customEvent = event as CustomEvent<{ section: string }>;
+      const section = customEvent.detail?.section;
+      if (section) {
+        setActiveSection(section);
+      } else {
+        setActiveSection(null);
+      }
+    };
+    window.addEventListener(SIDEBAR_SECTION_EVENT, handler as EventListener);
+    return () => {
+      window.removeEventListener(SIDEBAR_SECTION_EVENT, handler as EventListener);
+    };
+  }, []);
+
+  // Reset section when clicking on logo or other navigation
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      // Reset to show all when hash is cleared or set to gallery
+      if (!hash || hash === "") {
+        setActiveSection(null);
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
+
+  const { addXP } = useXP();
+  
+  // Track swap completion for XP (listen for swap success events)
+  useEffect(() => {
+    const handleSwapComplete = () => {
+      addXP("SWAP").catch(console.error);
+    };
+    
+    // Listen for swap events
+    window.addEventListener("swap:success", handleSwapComplete);
+    return () => window.removeEventListener("swap:success", handleSwapComplete);
+  }, [addXP]);
+
+  // Determine what to show based on active section
+  const showAll = activeSection === null || activeSection === "gallery";
+  const showMarketplace = showAll || activeSection === "marketplace";
+  const showCuratorNotes = showAll;
+  const showSwap = showAll || activeSection === "swap";
+  const showNFTExperience = showAll || activeSection === "mint" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
+
+  return (
+    <AppLayout>
+      <div className="mx-auto w-full max-w-7xl space-y-10 px-6 py-12 sm:px-8 lg:px-10">
+        {/* User Profile - Visible per Base guidelines */}
+        <section id="profile" className="space-y-4">
+          <UserProfile />
+        </section>
+
+        {/* XP System Section */}
+        <section className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <XPDisplay />
+            <SBTClaim />
+          </div>
+        </section>
+        {showMarketplace && (
+          <section className="space-y-6" id="marketplace">
+            <SectionHeading
+              eyebrow="Marketplace"
+              title="Live & trending drops"
+              description="Curate art-first auctions, reserve drops, and buy-now collections—all optimized for Base Account flows."
+            />
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 sm:gap-5">
+              {trendingDrops.slice(0, 4).map((drop) => (
+                <div
+                  key={drop.id}
+                  className="flex min-h-[320px] max-h-[320px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-slate-900/60 p-3 sm:p-4"
+                >
+                  <div className="relative mx-auto h-[160px] w-[160px] shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-[250px] sm:w-[250px]">
+                    <Image
+                      src={drop.image}
+                      alt={drop.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 160px, 250px"
+                    />
+                    <span
+                      className={`absolute left-2 top-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold sm:left-3 sm:top-3 sm:px-3 ${categoryStyles[drop.category]}`}
+                    >
+                      {drop.category.replace('-', ' ')}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex min-w-0 flex-1 flex-col gap-1 overflow-hidden sm:mt-3 sm:gap-1.5">
+                    <h3 className="truncate text-sm font-semibold text-white sm:text-base">{drop.title}</h3>
+                    <p className="text-xs text-slate-400">{drop.artist}</p>
+                    <p className="line-clamp-1 text-xs text-slate-300">{drop.description}</p>
+                  </div>
+                  <div className="mt-auto space-y-1.5 sm:space-y-2">
+                    <div className="grid grid-cols-2 gap-1.5 text-xs text-slate-400 sm:gap-2">
+                      <div className="rounded-lg border border-white/10 px-2 py-1 sm:px-2.5 sm:py-1.5">
+                        <p className="font-semibold text-white">Reserve</p>
+                        <p className="truncate text-xs">{drop.reserve}</p>
+                      </div>
+                      <div className="rounded-lg border border-white/10 px-2 py-1 sm:px-2.5 sm:py-1.5">
+                        <p className="font-semibold text-white">Status</p>
+                        <p className="truncate text-xs">{drop.endsIn}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-white/10 bg-slate-950/70 p-2 sm:p-2.5">
+                      <FarcasterShare 
+                        nftTitle={drop.title}
+                        nftImage={drop.image}
+                        customText={`Check out "${drop.title}" by ${drop.artist} on farbasenft! 🎨`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {showCuratorNotes && (
+          <section className="space-y-5" id="curator-notes">
+            <SectionHeading
+              eyebrow="Curation"
+              title="Curator notes"
+              description="Onboard collectors instantly—no wallet pop-ups, no email gates."
+            />
+            <div className="grid gap-6 md:grid-cols-3">
+              {curatorNotes.map((note) => (
+                <div key={note.title} className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
+                  <p className="text-sm font-semibold text-white">{note.title}</p>
+                  <p className="mt-3 text-sm text-slate-300">{note.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {showSwap && (
+          <section
+            id="swap-portal"
+            className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/60 p-6"
+          >
+            <SectionHeading
+              eyebrow="Swap Portal"
+              title="Rebalance on Base without leaving farbasenft"
+              description="Powered by OnchainKit swap components and the Base aggregator so collectors can move between ETH, USDC, and community tokens in a couple of taps."
+            />
+            <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+              <div className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
+                <SwapWrapper
+                  from={swapFromTokens}
+                  to={swapToTokens}
+                  experimental={{ useAggregator: true }}
+                  title="Swap on Base"
+                  headerLeftContent={
+                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-slate-200">
+                      Base L2
+                    </span>
+                  }
+                />
+              </div>
+              <div className="space-y-4 rounded-2xl border border-white/5 bg-slate-900/60 p-5">
+                <h3 className="text-lg font-semibold text-white">Swap highlights</h3>
+                <ul className="space-y-3 text-sm text-slate-200">
+                  {swapHighlights.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-cyan-400" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {showNFTExperience && (
+          <section className="space-y-5" id="nft-experience">
+            <SectionHeading
+              eyebrow="Mint · Sell · Collect"
+              title="Manage NFTs end-to-end inside farbasenft"
+              description="Connect a wallet, resolve Basenames, mint new works, and interact with your marketplace contracts without leaving the mini app."
+            />
+            <NFTActions />
+          </section>
+        )}
+      </div>
+    </AppLayout>
   );
 }

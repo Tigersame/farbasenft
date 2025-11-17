@@ -1,0 +1,32 @@
+{
+  "accountAssociation": {
+    "header": "farcaster-miniapp",
+    "payload": "YOUR_PAYLOAD_HERE",
+    "signature": "YOUR_SIGNATURE_HERE"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "farbasenft",
+    "homeUrl": "https://your-domain.com",
+    "iconUrl": "https://your-domain.com/icon.svg",
+    "splashImageUrl": "https://your-domain.com/splash.svg",
+    "splashBackgroundColor": "#030712",
+    "webhookUrl": "https://your-domain.com/api/webhook",
+    "subtitle": "Foundation-inspired NFT gallery",
+    "description": "Curate digital art auctions, reserve drops, and mini app embeds inspired by Foundation and powered by Base.",
+    "screenshotUrls": [
+      "https://your-domain.com/screenshots/1.png",
+      "https://your-domain.com/screenshots/2.png",
+      "https://your-domain.com/screenshots/3.png"
+    ],
+    "primaryCategory": "art",
+    "tags": ["nft", "art", "auctions", "base"],
+    "heroImageUrl": "https://your-domain.com/hero.svg",
+    "tagline": "Where onchain curators meet collectors.",
+    "ogTitle": "farbasenft",
+    "ogDescription": "Launch the farbasenft gallery inside Base.",
+    "ogImageUrl": "https://your-domain.com/og.png",
+    "noindex": true
+  }
+}
+

@@ -2,6 +2,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { RootProvider } from "@/providers/RootProvider";
+import { WalletIslandLauncher } from "@/components/WalletIslandLauncher";
+import { ConsoleErrorFilter } from "@/components/ConsoleErrorFilter";
+import { MiniAppSDK } from "@/components/MiniAppSDK";
+import { FarcasterDebug } from "@/components/FarcasterDebug";
+import { minikitConfig } from "@/lib/minikit.config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,6 +18,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const miniapp = minikitConfig.miniapp;
 
 export const metadata: Metadata = {
   title: "farbasenft - Foundation-inspired Base mini app",
@@ -43,6 +51,22 @@ export const metadata: Metadata = {
       "Discover curated NFT auctions designed for the Base mini app ecosystem.",
     images: ["/hero.svg"],
   },
+  other: {
+    "fc:miniapp": JSON.stringify({
+      version: "next",
+      imageUrl: miniapp.heroImageUrl,
+      button: {
+        title: `Open ${miniapp.name}`,
+        action: {
+          type: "launch_frame",
+          name: `Launch ${miniapp.name}`,
+          url: miniapp.homeUrl,
+          splashImageUrl: miniapp.splashImageUrl,
+          splashBackgroundColor: miniapp.splashBackgroundColor,
+        },
+      },
+    }),
+  },
 };
 
 export default function RootLayout({
@@ -51,9 +75,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ConsoleErrorFilter />
+        <MiniAppSDK />
+        <RootProvider>
+          <WalletIslandLauncher />
         {children}
+        <FarcasterDebug />
+        </RootProvider>
       </body>
     </html>
   );

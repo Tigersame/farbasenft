@@ -10,7 +10,7 @@ export const minikitConfig = {
   miniapp: {
     version: "1",
     name: "farbasenft",
-    subtitle: "Digital art reimagined",
+    subtitle: "Discover digital art reimagined",
     description:
       "Curated NFT showcases, timed auctions, and artist-first storytelling inspired by Foundation.",
     screenshotUrls: [
@@ -25,7 +25,7 @@ export const minikitConfig = {
     primaryCategory: "art",
     tags: ["nft", "auctions", "art", "foundation-clone"],
     heroImageUrl: `${ROOT_URL}/hero.svg`,
-    tagline: "Curators meet collectors",
+    tagline: "Where onchain curators meet collectors.",
     ogTitle: "farbasenft",
     ogDescription:
       "A boutique NFT marketplace experience crafted for Base mini apps.",
@@ -47,3 +47,4 @@ export const getMiniAppManifest = () => {
     accountAssociation,
   };
 };
+

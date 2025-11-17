@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { curatorNotes, heroDrop, trendingDrops } from "@/data/nfts";
+import { Buy, SwapDefault, type SwapDefaultProps } from "@coinbase/onchainkit/buy";
 
 const categoryStyles: Record<string, string> = {
   auction: "bg-purple-500/10 text-purple-300 ring-1 ring-purple-400/30",
@@ -1011,16 +1012,32 @@ const manifestExampleSnippet = `{
     "payload": "<generated-payload>",
     "signature": "<generated-signature>"
   },
+  "baseBuilder": {
+    "ownerAddress": "0xYourBaseBuildWallet"
+  },
   "miniapp": {
     "version": "1",
-    "name": "Basecamp 2025",
-    "description": "Access and manage your experience @ Basecamp",
-    "iconUrl": "https://basecamp25.app/icon.png",
-    "homeUrl": "https://basecamp25.app",
-    "canonicalDomain": "basecamp25.app",
-    "requiredChains": ["eip155:8453"],
-    "tags": ["basecamp", "miniapp"],
-    "requiredCapabilities": ["actions.ready", "actions.signIn"]
+    "name": "farbasenft",
+    "homeUrl": "https://your-domain.com",
+    "iconUrl": "https://your-domain.com/icon.svg",
+    "splashImageUrl": "https://your-domain.com/splash.svg",
+    "splashBackgroundColor": "#030712",
+    "webhookUrl": "https://your-domain.com/api/webhook",
+    "subtitle": "Discover digital art reimagined",
+    "description": "Curated NFT showcases and artist-first storytelling on Base.",
+    "screenshotUrls": [
+      "https://your-domain.com/screenshots/1.png",
+      "https://your-domain.com/screenshots/2.png",
+      "https://your-domain.com/screenshots/3.png"
+    ],
+    "primaryCategory": "art",
+    "tags": ["nft", "art", "auctions"],
+    "heroImageUrl": "https://your-domain.com/hero.png",
+    "tagline": "Where onchain curators meet collectors.",
+    "ogTitle": "farbasenft",
+    "ogDescription": "Launch the farbasenft gallery inside Base.",
+    "ogImageUrl": "https://your-domain.com/og.png",
+    "noindex": true
   }
 }`;
 
@@ -1359,6 +1376,7 @@ export default function Home() {
           alt="farbasenft hero"
           fill
           priority
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 75vw"
           className="object-cover opacity-40 mix-blend-screen"
         />
         <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 sm:px-8 lg:px-10">
@@ -1478,6 +1496,7 @@ export default function Home() {
                     src={nft.image}
                     alt={nft.title}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />
                 </div>
@@ -1700,6 +1719,7 @@ export default function Home() {
                 alt="Mini app embed preview"
                 width={1014}
                 height={1000}
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 480px"
                 className="w-full rounded-xl border border-slate-800"
                 priority={false}
               />
@@ -1795,6 +1815,7 @@ export default function Home() {
               alt="Flow from mini app URL to embed generation"
               width={1920}
               height={1477}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 960px"
               className="w-full rounded-xl border border-slate-800"
             />
           </div>
@@ -1848,28 +1869,30 @@ export default function Home() {
     "signature": "..."
   },
   "baseBuilder": {
-    "ownerAddress": "0x..."
+    "ownerAddress": "0xYourBaseBuildWallet"
   },
   "miniapp": {
     "version": "1",
     "name": "farbasenft",
-    "homeUrl": "https://your-domain.vercel.app",
-    "iconUrl": "https://your-domain.vercel.app/icon.svg",
-    "splashImageUrl": "https://your-domain.vercel.app/splash.svg",
+    "homeUrl": "https://your-domain.com",
+    "iconUrl": "https://your-domain.com/icon.svg",
+    "splashImageUrl": "https://your-domain.com/splash.svg",
     "splashBackgroundColor": "#030712",
-    "webhookUrl": "https://your-domain.vercel.app/api/webhook",
+    "webhookUrl": "https://your-domain.com/api/webhook",
     "subtitle": "Discover digital art reimagined",
-    "description": "Curated NFT showcases, auctions, and artist storytelling.",
+    "description": "Curated NFT showcases and artist-first storytelling on Base.",
     "screenshotUrls": [
-      "https://your-domain.vercel.app/splash.svg"
+      "https://your-domain.com/screenshots/1.png",
+      "https://your-domain.com/screenshots/2.png",
+      "https://your-domain.com/screenshots/3.png"
     ],
-    "primaryCategory": "art-creativity",
+    "primaryCategory": "art",
     "tags": ["nft", "art", "auctions"],
-    "heroImageUrl": "https://your-domain.vercel.app/hero.svg",
+    "heroImageUrl": "https://your-domain.com/hero.png",
     "tagline": "Where onchain curators meet collectors.",
     "ogTitle": "farbasenft",
-    "ogDescription": "A boutique NFT marketplace experience crafted for Base mini apps.",
-    "ogImageUrl": "https://your-domain.vercel.app/hero.svg",
+    "ogDescription": "Launch the farbasenft gallery inside Base.",
+    "ogImageUrl": "https://your-domain.com/og.png",
     "noindex": true
   }
 }`}
@@ -1897,6 +1920,7 @@ export default function Home() {
                   alt={`${option.title} confirmation`}
                   width={1200}
                   height={760}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 60vw, 720px"
                   className="w-full rounded-xl border border-slate-800"
                 />
               </div>
@@ -2370,9 +2394,13 @@ export default function Home() {
               alt="Notification preview on mobile"
               width={1163}
               height={1033}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 680px"
               className="w-full rounded-xl border border-slate-800"
             />
           </div>
+          <Info>
+            Notification tokens are scoped to each client FID. A collector can enable notifications in Base App and disable them in Warpcast without affecting the other client. Farcaster activates tokens immediately, while the Base App waits for a successful webhook response before issuing them.
+          </Info>
           <div className="rounded-2xl border border-white/5 bg-slate-950/70 p-6">
             <h3 className="text-lg font-semibold text-white">Webhook handler</h3>
             <pre className="mt-4 overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs leading-6 text-slate-200">
@@ -2441,6 +2469,7 @@ export default function Home() {
                 alt="Neynar webhook configuration"
                 width={1342}
                 height={726}
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 720px"
                 className="w-full rounded-xl border border-slate-800"
               />
               <p className="mt-3 text-sm text-slate-300">
