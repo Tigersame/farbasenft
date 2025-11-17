@@ -1,36 +1,137 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# farbasenft
+
+A Foundation-inspired NFT marketplace built as a Base Mini App with Farcaster integration, XP system, and Soulbound Tokens (SBT).
+
+## Features
+
+- 🎨 **NFT Marketplace**: Create, buy, and sell NFTs on Base
+- 🏆 **XP System**: Earn experience points through daily logins, swaps, and NFT activities
+- 🎖️ **Soulbound Tokens**: Claim exclusive SBTs for early adopters
+- 🔗 **Farcaster Integration**: Share NFTs and interact with the Farcaster community
+- 📱 **Base Mini App**: Optimized for Base app and Warpcast
+- 🔔 **Notifications**: Base Mini App notification support
+- 🖼️ **IPFS Storage**: Pinata integration for decentralized NFT storage
+- 🔄 **Token Swaps**: Built-in swap functionality with OnchainKit
+
+## Tech Stack
+
+- **Framework**: Next.js 16 with React 19
+- **Blockchain**: Base (Ethereum L2)
+- **Wallet**: Wagmi + OnchainKit
+- **Farcaster**: Mini App SDK + Quick Auth
+- **Storage**: Pinata (IPFS)
+- **Styling**: Tailwind CSS 4
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm or yarn
+- Wallet (Coinbase Wallet, MetaMask, etc.)
+- API keys (see `.env.example`)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd farbasenft
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Copy environment variables template:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Fill in your API keys in `.env.local`:
+   - WalletConnect Project ID
+   - Pinata JWT, API Key, and Secret
+   - OnchainKit API Key
+   - Tatum API Key (optional)
+   - Neynar API Key and Webhook URL
+   - Base RPC URL
 
-## Learn More
+5. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment Variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+See `.env.example` for all required environment variables. **Never commit `.env.local` to git!**
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+farbasenft/
+├── src/
+│   ├── app/              # Next.js app router pages
+│   ├── components/       # React components
+│   ├── lib/              # Utilities and hooks
+│   └── providers/        # Context providers
+├── contracts/            # Solidity smart contracts
+├── public/               # Static assets
+└── .env.example          # Environment variables template
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Documentation
+
+- [Farcaster Auth Setup](./FARCASTER_AUTH_SETUP.md)
+- [Wallet Setup](./WALLET_SETUP.md)
+- [Pinata Setup](./PINATA_SETUP.md)
+- [XP System](./XP_SYSTEM.md)
+- [Base Guidelines Compliance](./BASE_GUIDELINES_COMPLIANCE.md)
+- [Manifest Setup](./MANIFEST_SETUP.md)
+- [Notifications Setup](./NOTIFICATIONS_SETUP.md)
+- [Neynar Webhook Setup](./NEYNAR_WEBHOOK_SETUP.md)
+
+## Smart Contracts
+
+The SBT (Soulbound Token) contract is located in `contracts/SBT.sol`. Deploy it to Base to enable SBT claiming.
+
+## Deployment
+
+### Vercel
+
+1. Push your code to GitHub
+2. Import project in Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy!
+
+### Other Platforms
+
+The app can be deployed to any platform that supports Next.js:
+- Netlify
+- Railway
+- Render
+- Your own server
+
+## Security
+
+⚠️ **Important**: Never commit sensitive information to git:
+- `.env.local` files
+- Private keys
+- API keys
+- Secrets
+
+All sensitive files are excluded via `.gitignore`.
+
+## License
+
+MIT
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+## Support
+
+For issues and questions, please open an issue on GitHub.
