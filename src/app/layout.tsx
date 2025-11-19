@@ -1,7 +1,14 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { minikitConfig } from "@/../minikit.config";
+import { RootProvider } from "@/providers/RootProvider";
+import { WalletIslandLauncher } from "@/components/WalletIslandLauncher";
+import { ConsoleErrorFilter } from "@/components/ConsoleErrorFilter";
+import { MiniAppSDK } from "@/components/MiniAppSDK";
+import { FarcasterDebug } from "@/components/FarcasterDebug";
+import { ProviderErrorBoundary } from "@/components/ProviderErrorBoundary";
+import { minikitConfig } from "@/lib/minikit.config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,19 +23,22 @@ const geistMono = Geist_Mono({
 const miniapp = minikitConfig.miniapp;
 
 export const metadata: Metadata = {
-  title: "farbasenft - Foundation-inspired Base mini app",
+  title: "Farbase - NFT Marketplace on Base with Farcaster",
   description:
-    "Curate digital art auctions, reserve drops, and mini app embeds inspired by Foundation and powered by Base.",
+    "An NFT marketplace on Base powered by Farcaster integration. Discover, mint, swap, and collect NFTs seamlessly.",
+  icons: {
+    icon: "/favicon.svg",
+  },
   metadataBase:
     process.env.NEXT_PUBLIC_APP_URL !== undefined
       ? new URL(process.env.NEXT_PUBLIC_APP_URL)
       : undefined,
   openGraph: {
-    title: "farbasenft",
+    title: "FarcastMints",
     description:
-      "A Foundation-style NFT gallery tailored for Base mini apps and Farcaster embeds.",
+      "An NFT marketplace on Base with Farcaster integration. Mint, swap, and collect on-chain.",
     url: process.env.NEXT_PUBLIC_APP_URL,
-    siteName: "farbasenft",
+    siteName: "FarcastMints",
     images: [
       {
         url: "/hero.svg",
@@ -40,9 +50,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "farbasenft",
+    title: "FarcastMints",
     description:
-      "Discover curated NFT auctions designed for the Base mini app ecosystem.",
+      "Discover and collect NFTs on Base. Farcaster-native marketplace with seamless wallet integration.",
     images: ["/hero.svg"],
   },
   other: {
@@ -69,42 +79,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+    <html lang="en" className="dark">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+        <ProviderErrorBoundary>
+          <ConsoleErrorFilter />
+          <MiniAppSDK />
+          <RootProvider>
+            <WalletIslandLauncher />
+            {children}
+            <FarcasterDebug />
+          </RootProvider>
+        </ProviderErrorBoundary>
       </body>
     </html>
   );
 }
-
-export const metadata: Metadata = {
-  title: "farbasenft — Foundation-inspired Base mini app",
-  description:
-    "Curate digital art auctions, reserve drops, and mini app embeds inspired by Foundation and powered by Base.",
-  metadataBase:
-    process.env.NEXT_PUBLIC_APP_URL !== undefined
-      ? new URL(process.env.NEXT_PUBLIC_APP_URL)
-      : undefined,
-  openGraph: {
-    title: "farbasenft",
-    description:
-      "A Foundation-style NFT gallery tailored for Base mini apps and Farcaster embeds.",
-    url: process.env.NEXT_PUBLIC_APP_URL,
-    siteName: "farbasenft",
-    images: [
-      {
-        url: "/hero.svg",
-        width: 1200,
-        height: 630,
-        alt: "farbasenft hero artwork",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "farbasenft",
-    description:
-      "Discover curated NFT auctions designed for the Base mini app ecosystem.",
-    images: ["/hero.svg"],
-  },
-};

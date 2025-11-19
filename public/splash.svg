@@ -9,6 +9,9 @@
       <stop offset="50%" stop-color="#a855f7" />
       <stop offset="100%" stop-color="#14b8a6" />
     </linearGradient>
+    <filter id="splash-blur">
+      <feGaussianBlur stdDeviation="160" />
+    </filter>
   </defs>
   <rect width="1080" height="1920" fill="url(#splash-bg)" />
   <g filter="url(#splash-blur)">
@@ -71,11 +74,4 @@
   >
     Enter the gallery
   </text>
-  <defs>
-    <filter id="splash-blur">
-      <feGaussianBlur stdDeviation="160" />
-    </filter>
-  </defs>
 </svg>
-
-
