@@ -62,7 +62,7 @@ function validateEmbed(embed: MiniAppEmbed): boolean {
  * 
  * @param imageUrl - 3:2 aspect ratio image (600x400 minimum, PNG recommended)
  * @param buttonTitle - CTA text (max 32 chars)
- * @param appName - Application name (defaults to FarcastMints)
+ * @param appName - Application name (defaults to Farbase)
  * @param actionUrl - URL to open when button clicked (optional, defaults to current URL)
  * @param splashImageUrl - Splash screen image (optional, defaults to manifest value)
  * @param splashBg - Splash background color hex (optional, defaults to #030712)
@@ -72,7 +72,7 @@ function validateEmbed(embed: MiniAppEmbed): boolean {
 export function generateMiniAppEmbed(
   imageUrl: string,
   buttonTitle: string,
-  appName: string = "FarcastMints",
+  appName: string = "Farbase",
   actionUrl?: string,
   splashImageUrl?: string,
   splashBg?: string
@@ -111,7 +111,7 @@ export function generateNFTEmbedMeta(
   detailUrl: string
 ): string {
   const buttonTitle = `View ${nftName || "NFT"}`;
-  const appName = `FarcastMints - ${collectionName}`;
+  const appName = `Farbase - ${collectionName}`;
 
   return generateMiniAppEmbed(
     nftImage,
@@ -137,7 +137,7 @@ export function generateCollectionEmbedMeta(
   return generateMiniAppEmbed(
     collectionImage,
     buttonTitle,
-    `FarcastMints - ${collectionName}`,
+    `Farbase - ${collectionName}`,
     collectionUrl,
     "https://farbasenft.xyz/splash.svg",
     "#030712"
@@ -155,7 +155,7 @@ export function generateLeaderboardEmbedMeta(
   return generateMiniAppEmbed(
     imageUrl,
     "View Rankings",
-    `FarcastMints - ${title}`,
+    `Farbase - ${title}`,
     leaderboardUrl,
     "https://farbasenft.xyz/splash.svg",
     "#030712"
@@ -169,7 +169,7 @@ export function generateLeaderboardEmbedMeta(
 export function generateFrameEmbed(
   imageUrl: string,
   buttonTitle: string,
-  appName: string = "FarcastMints",
+  appName: string = "Farbase",
   actionUrl?: string,
   splashImageUrl?: string,
   splashBg?: string

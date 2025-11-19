@@ -272,7 +272,7 @@ export default function LeaderboardPageClient() {
             <div className="bg-slate-800 rounded-lg p-4 mb-6">
               <p className="text-slate-400 text-xs mb-2">Share Message</p>
               <textarea
-                defaultValue={`🏆 Check out the XP leaderboard on @FarcastMints! Can you beat my score? ${leaderboardUrl}`}
+                defaultValue={`🏆 Check out the XP leaderboard on @Farbase! Can you beat my score? ${leaderboardUrl}`}
                 className="w-full bg-slate-700 text-white text-sm rounded px-3 py-2 resize-none h-24"
                 placeholder="Share message"
               />

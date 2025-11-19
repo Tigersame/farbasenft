@@ -28,7 +28,7 @@ const getWagmiConfig = () => {
   // Build connectors - use only Coinbase wallet to avoid conflicts with MetaMask
   const connectors = [
     coinbaseWallet({
-      appName: "farcastmints",
+      appName: "farbase",
       version: "4",
     }),
   ];
@@ -71,7 +71,7 @@ export function RootProvider({ children }: { children: ReactNode }) {
           miniKit={{ enabled: true, autoConnect: true }}
           config={{
             appearance: {
-              name: "farcastmints",
+              name: "farbase",
               mode: "dark",
               theme: "base",
             },

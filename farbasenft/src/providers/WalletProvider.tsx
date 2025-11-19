@@ -15,7 +15,7 @@ export const config = createConfig({
   chains: [base, baseSepolia, mainnet, sepolia],
   connectors: [
     injected(),
-    coinbaseWallet({ appName: 'FarcastMints' }),
+    coinbaseWallet({ appName: 'Farbase' }),
     walletConnect({
       projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
     }),

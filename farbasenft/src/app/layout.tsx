@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 const miniapp = minikitConfig.miniapp;
 
 export const metadata: Metadata = {
-  title: "FarcastMints - NFT Marketplace on Base with Farcaster",
+  title: "Farbase - NFT Marketplace on Base with Farcaster",
   description:
     "An NFT marketplace on Base powered by Farcaster integration. Discover, mint, swap, and collect NFTs seamlessly.",
   icons: {

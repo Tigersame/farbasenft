@@ -22,10 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
   );
 
   return {
-    title: 'XP Leaderboard - FarcastMints',
-    description: 'Check the top XP earners on FarcastMints and climb the ranks',
+    title: 'XP Leaderboard - Farbase',
+    description: 'Check the top XP earners on Farbase and climb the ranks',
     openGraph: {
-      title: 'XP Leaderboard - FarcastMints',
+      title: 'XP Leaderboard - Farbase',
       description: 'Top earners competing for XP rewards and recognition',
       images: [
         {

@@ -280,7 +280,7 @@ export default function Page() {
     <AppLayout>
       <FarbaseBanner />
       <div className="mx-auto w-full max-w-7xl space-y-10 px-6 py-12 sm:px-8 lg:px-10">
-        {/* FarcastMints Hero Banner */}
+        {/* Farbase Hero Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-blue-950 via-blue-900 to-blue-950 p-12 shadow-2xl">
           {/* Decorative gradient overlay */}
           <div className="absolute inset-0 opacity-30">
@@ -290,7 +290,7 @@ export default function Page() {
           
           {/* Content */}
           <div className="relative z-10 space-y-4">
-            <h1 className="text-5xl font-bold text-white md:text-6xl">FarcastMints</h1>
+            <h1 className="text-5xl font-bold text-white md:text-6xl">Farbase</h1>
             <p className="max-w-2xl text-xl text-slate-100 md:text-2xl">
               A next-gen NFT marketplace built on Base with seamless Farcaster integration
             </p>
