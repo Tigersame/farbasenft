@@ -238,7 +238,7 @@ Modify Tailwind classes in components to match your theme:
 
 ```tsx
 // WalletIntegration.tsx - Change button gradient
-className="bg-gradient-to-r from-blue-500 to-purple-500"
+className="bg-linear-to-r from-blue-500 to-purple-500"
 
 // WalletBalance.tsx - Change border color
 className="border border-blue-500/30"

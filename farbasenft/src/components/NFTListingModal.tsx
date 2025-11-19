@@ -266,7 +266,7 @@ export default function NFTListingModal({ nft, isOpen, onClose, onList }: NFTLis
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 rounded-lg text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 bg-linear-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 rounded-lg text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 boxShadow: '0 0 20px rgba(139,92,246,0.4)'
               }}
