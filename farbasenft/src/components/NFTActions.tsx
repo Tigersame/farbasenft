@@ -583,7 +583,7 @@ export function NFTActions() {
               key={panel.id}
               type="button"
               onClick={() => setActivePanel(panel.id)}
-              aria-pressed={isActive ? 'true' : 'false'}
+              aria-pressed={isActive}
               className={`flex flex-1 items-center justify-between rounded-2xl border px-4 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-sky-400/40 lg:flex-none ${
                 isActive
                   ? "border-white/30 bg-white/10 text-white shadow-lg shadow-slate-900/40"
