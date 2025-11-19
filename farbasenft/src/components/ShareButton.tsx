@@ -61,6 +61,7 @@ export function ShareButton({
                   type="text"
                   value={shareUrl}
                   readOnly
+                  placeholder="Share URL"
                   className="flex-1 bg-slate-700 text-white text-sm rounded px-3 py-2 font-mono overflow-hidden"
                 />
                 <button
@@ -80,6 +81,7 @@ export function ShareButton({
                 <p className="text-slate-400 text-xs mb-2">Share Message</p>
                 <textarea
                   defaultValue={message}
+                  placeholder="Share message"
                   className="w-full bg-slate-700 text-white text-sm rounded px-3 py-2 resize-none h-20"
                 />
               </div>
@@ -166,6 +168,7 @@ export function ShareModal({
               type="text"
               value={shareUrl}
               readOnly
+              placeholder="Share URL"
               className="flex-1 bg-slate-700 text-white text-xs rounded px-3 py-2 font-mono overflow-hidden"
             />
             <button
@@ -185,6 +188,7 @@ export function ShareModal({
             <p className="text-slate-400 text-xs mb-2">Share Message</p>
             <textarea
               defaultValue={message}
+              placeholder="Share message"
               className="w-full bg-slate-700 text-white text-sm rounded px-3 py-2 resize-none h-20"
             />
           </div>

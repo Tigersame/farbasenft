@@ -129,6 +129,7 @@ export default function MintPage() {
             <select 
               value={uploadProvider} 
               onChange={e => setUploadProvider(e.target.value)}
+              aria-label="Select IPFS provider"
               className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-400/40"
             >
               <option value="pinata">Pinata</option>
@@ -147,6 +148,7 @@ export default function MintPage() {
               type="file" 
               onChange={handleFile}
               accept="image/*,video/*,audio/*"
+              placeholder="Choose artwork file"
               className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-sky-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-sky-400"
             />
             {file && (

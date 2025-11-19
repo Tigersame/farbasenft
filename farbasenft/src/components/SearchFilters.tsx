@@ -94,6 +94,7 @@ export default function SearchFilters({ onFiltersChange, nfts }: SearchFilterPro
               sortBy: e.target.value as SearchFilters['sortBy'],
             })
           }
+          aria-label="Sort by"
           className="flex-1 px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-cyan-500"
         >
           <option value="trending">📈 Trending</option>
@@ -152,6 +153,7 @@ export default function SearchFilters({ onFiltersChange, nfts }: SearchFilterPro
             <select
               value={filters.collection}
               onChange={(e) => handleFilterChange({ collection: e.target.value })}
+              aria-label="Filter by collection"
               className="w-full px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-cyan-500"
             >
               <option value="">All Collections</option>
