@@ -5,7 +5,7 @@
 
 export const XP_REWARDS = {
   DAILY_LOGIN: 100,
-  SWAP: 100,
+  SWAP: 100, // Only on-chain swaps with transaction verification
   NFT_CREATE: 100,
   NFT_SELL: 100,
   NFT_BUY: 100,

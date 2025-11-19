@@ -1,7 +1,16 @@
 "use client";
 
+import { Suspense } from "react";
 import { WalletIsland } from "@coinbase/onchainkit/wallet";
 
-export function WalletIslandLauncher() {
+function WalletIslandContent() {
   return <WalletIsland />;
+}
+
+export function WalletIslandLauncher() {
+  return (
+    <Suspense fallback={null}>
+      <WalletIslandContent />
+    </Suspense>
+  );
 }

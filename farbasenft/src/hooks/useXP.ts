@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAccount } from "wagmi";
 import type { UserXP, XPAction } from "@/lib/xp";
 
@@ -67,23 +67,28 @@ export function useXP() {
 
   // Claim daily login
   const claimDailyLogin = useCallback(async () => {
+    // Use the main /api/xp endpoint with DAILY_LOGIN action
     return addXP("DAILY_LOGIN");
   }, [addXP]);
 
-  // Check and claim daily login on mount
+  // Fetch XP on wallet connection
   useEffect(() => {
     if (address) {
-      fetchXP().then(() => {
-        // Auto-claim daily login if available
-        if (userXP) {
-          const today = new Date().toISOString().split("T")[0];
-          if (userXP.lastLoginDate !== today) {
-            claimDailyLogin();
-          }
-        }
-      });
+      fetchXP();
     }
-  }, [address, fetchXP, claimDailyLogin, userXP]);
+  }, [address]);
+
+  // Auto-claim daily login when XP is fetched (only once per session)
+  const dailyLoginClaimedRef = useRef(false);
+  useEffect(() => {
+    if (userXP && address && !dailyLoginClaimedRef.current) {
+      const today = new Date().toISOString().split("T")[0];
+      if (userXP.lastLoginDate !== today) {
+        dailyLoginClaimedRef.current = true;
+        claimDailyLogin();
+      }
+    }
+  }, []);
 
   return {
     userXP,

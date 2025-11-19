@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Swap } from "@coinbase/onchainkit/swap";
 import type { Token } from "@coinbase/onchainkit/token";
 import { useXP } from "@/hooks/useXP";
+import { useAccount } from "wagmi";
 import { SwapWrapper } from "@/components/SwapWrapper";
 
 import { AppLayout } from "@/components/AppLayout";
@@ -12,9 +13,16 @@ import { NFTActions } from "@/components/NFTActions";
 import { FarcasterShare } from "@/components/FarcasterShare";
 import { XPDisplay } from "@/components/XPDisplay";
 import { SBTClaim } from "@/components/SBTClaim";
+import { NFTSellModal } from "@/components/NFTSellModal";
 import { UserProfile } from "@/components/UserProfile";
 import { SIDEBAR_SECTION_EVENT } from "@/components/SidebarWithStore";
+import Dashboard from "@/components/Dashboard";
 import { curatorNotes, trendingDrops } from "@/data/nfts";
+import FarbaseMintNFTGallery from "@/components/FarbaseMintGallery";
+import Leaderboard from "@/components/Leaderboard";
+import Favorites from "@/components/Favorites";
+import Portfolio from "@/components/Portfolio";
+import SearchFilters from "@/components/SearchFilters";
 
 const categoryStyles: Record<string, string> = {
   auction: "bg-purple-500/10 text-purple-200 ring-1 ring-purple-400/40",
@@ -22,41 +30,112 @@ const categoryStyles: Record<string, string> = {
   "buy-now": "bg-sky-500/10 text-sky-200 ring-1 ring-sky-400/40",
 };
 
-const ethToken: Token = {
-  name: "ETH",
-  symbol: "ETH",
-  address: "",
-  decimals: 18,
-  image: "https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png",
-  chainId: 8453,
+// Mainnet Base tokens (chainId: 8453)
+const mainnetTokens = {
+  ethToken: {
+    name: "ETH",
+    symbol: "ETH",
+    address: "",
+    decimals: 18,
+    image: "https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png",
+    chainId: 8453,
+  } as Token,
+  usdcToken: {
+    name: "USDC",
+    symbol: "USDC",
+    address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    decimals: 6,
+    image:
+      "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/44/2b/442b80bd16af0c0d9b22e03a16753823fe826e5bfd457292b55fa0ba8c1ba213-ZWUzYjJmZGUtMDYxNy00NDcyLTg0NjQtMWI4OGEwYjBiODE2",
+    chainId: 8453,
+  } as Token,
+  degenToken: {
+    name: "DEGEN",
+    symbol: "DEGEN",
+    address: "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+    decimals: 18,
+    image:
+      "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/3b/bf/3bbf118b5e6dc2f9e7fc607a6e7526647b4ba8f0bea87125f971446d57b296d2-MDNmNjY0MmEtNGFiZi00N2I0LWIwMTItMDUyMzg2ZDZhMWNm",
+    chainId: 8453,
+  } as Token,
+  wethToken: {
+    name: "Wrapped ETH",
+    symbol: "WETH",
+    address: "0x4200000000000000000000000000000000000006",
+    decimals: 18,
+    image: "https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png",
+    chainId: 8453,
+  } as Token,
+  daiToken: {
+    name: "Dai Stablecoin",
+    symbol: "DAI",
+    address: "0x50c5725949a6f0c72e6c4a641f24049a917db0cb",
+    decimals: 18,
+    image: "https://ethereum-optimism.github.io/data/DAI/logo.svg",
+    chainId: 8453,
+  } as Token,
 };
 
-const usdcToken: Token = {
-  name: "USDC",
-  symbol: "USDC",
-  address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
-  decimals: 6,
-  image:
-    "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/44/2b/442b80bd16af0c0d9b22e03a16753823fe826e5bfd457292b55fa0ba8c1ba213-ZWUzYjJmZGUtMDYxNy00NDcyLTg0NjQtMWI4OGEwYjBiODE2",
-  chainId: 8453,
+// Sepolia testnet tokens (chainId: 84532)
+const sepoliaTokens = {
+  ethToken: {
+    name: "ETH",
+    symbol: "ETH",
+    address: "",
+    decimals: 18,
+    image: "https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png",
+    chainId: 84532,
+  } as Token,
+  usdcToken: {
+    name: "USDC",
+    symbol: "USDC",
+    address: "0x0b2C639c533813f4Aa9D7837CAf62653d53975E5",
+    decimals: 6,
+    image:
+      "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/44/2b/442b80bd16af0c0d9b22e03a16753823fe826e5bfd457292b55fa0ba8c1ba213-ZWUzYjJmZGUtMDYxNy00NDcyLTg0NjQtMWI4OGEwYjBiODE2",
+    chainId: 84532,
+  } as Token,
+  degenToken: {
+    name: "DEGEN",
+    symbol: "DEGEN",
+    address: "0x0000000000000000000000000000000000000000", // Not available on Sepolia
+    decimals: 18,
+    image:
+      "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/3b/bf/3bbf118b5e6dc2f9e7fc607a6e7526647b4ba8f0bea87125f971446d57b296d2-MDNmNjY0MmEtNGFiZi00N2I0LWIwMTItMDUyMzg2ZDZhMWNm",
+    chainId: 84532,
+  } as Token,
+  wethToken: {
+    name: "Wrapped ETH",
+    symbol: "WETH",
+    address: "0x4200000000000000000000000000000000000006",
+    decimals: 18,
+    image: "https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png",
+    chainId: 84532,
+  } as Token,
+  daiToken: {
+    name: "Dai Stablecoin",
+    symbol: "DAI",
+    address: "0x0000000000000000000000000000000000000000", // Not available on Sepolia
+    decimals: 18,
+    image: "https://ethereum-optimism.github.io/data/DAI/logo.svg",
+    chainId: 84532,
+  } as Token,
 };
 
-const degenToken: Token = {
-  name: "DEGEN",
-  symbol: "DEGEN",
-  address: "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
-  decimals: 18,
-  image:
-    "https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/3b/bf/3bbf118b5e6dc2f9e7fc607a6e7526647b4ba8f0bea87125f971446d57b296d2-MDNmNjY0MmEtNGFiZi00N2I0LWIwMTItMDUyMzg2ZDZhMWNm",
-  chainId: 8453,
-};
-
-const swapFromTokens = [ethToken, usdcToken, degenToken];
-const swapToTokens = [usdcToken, ethToken, degenToken];
+// Helper function to get tokens based on chain
+function getTokensForChain(chainId?: number) {
+  if (chainId === 84532) {
+    return sepoliaTokens;
+  }
+  return mainnetTokens;
+}
 
 const swapHighlights = [
-  "Aggregator-backed routing across Base liquidity pools.",
-  "ETH, USDC, and community tokens like DEGEN supported out of the box.",
+  "Instant swaps with best rates across multiple DEXs on Base L2",
+  "Gas-optimized transactions - save up to 95% compared to Ethereum mainnet",
+  "Support for ETH, USDC, WETH, DAI, and community tokens like DEGEN",
+  "Secure aggregator routing ensures you always get the best price",
+  "Seamlessly integrated - swap without leaving your NFT browsing experience",
 ];
 
 function SectionHeading({ title, eyebrow, description }: { title: string; eyebrow?: string; description?: string }) {
@@ -71,7 +150,29 @@ function SectionHeading({ title, eyebrow, description }: { title: string; eyebro
 
 export default function Page() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [pendingNFT, setPendingNFT] = useState<any>(null);
+  const [showSearchFilters, setShowSearchFilters] = useState(false);
+  const [shareNFT, setShareNFT] = useState<any>(null);
+  const [sellNFT, setSellNFT] = useState<any>(null);
+  const { address, chainId } = useAccount();
 
+  // Get tokens based on current chain
+  const currentTokens = getTokensForChain(chainId);
+  const swapFromTokens = [
+    currentTokens.ethToken,
+    currentTokens.usdcToken,
+    currentTokens.wethToken,
+    currentTokens.degenToken,
+    currentTokens.daiToken,
+  ].filter((token) => token.address !== "0x0000000000000000000000000000000000000000"); // Filter out unavailable tokens
+  
+  const swapToTokens = [
+    currentTokens.usdcToken,
+    currentTokens.ethToken,
+    currentTokens.wethToken,
+    currentTokens.degenToken,
+    currentTokens.daiToken,
+  ].filter((token) => token.address !== "0x0000000000000000000000000000000000000000"); // Filter out unavailable tokens
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handler = (event: Event) => {
@@ -89,16 +190,40 @@ export default function Page() {
     };
   }, []);
 
-  // Reset section when clicking on logo or other navigation
+  // Sync activeSection with URL hash changes
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleHashChange = () => {
-      const hash = window.location.hash;
-      // Reset to show all when hash is cleared or set to gallery
-      if (!hash || hash === "") {
-        setActiveSection(null);
+      const hash = window.location.hash.slice(1); // Remove # prefix
+      
+      // Map hashes to section names
+      const hashMap: Record<string, string> = {
+        "dashboard": "dashboard",
+        "": "gallery",
+        "gallery": "gallery",
+        "farbasemint-gallery": "farbasemint-gallery",
+        "nft-experience": "nft-experience",
+        "swap-portal": "swap",
+        "marketplace": "marketplace",
+      };
+      
+      const section = hashMap[hash] || null;
+      setActiveSection(section);
+      
+      // Scroll to section if it exists
+      if (hash) {
+        setTimeout(() => {
+          const element = document.getElementById(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 100);
       }
     };
+    
+    // Call on initial load to sync with current hash
+    handleHashChange();
+    
     window.addEventListener("hashchange", handleHashChange);
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
@@ -107,164 +232,458 @@ export default function Page() {
 
   const { addXP } = useXP();
   
-  // Track swap completion for XP (listen for swap success events)
+  // Load pending NFT purchase from session storage
   useEffect(() => {
-    const handleSwapComplete = () => {
-      addXP("SWAP").catch(console.error);
-    };
-    
-    // Listen for swap events
-    window.addEventListener("swap:success", handleSwapComplete);
-    return () => window.removeEventListener("swap:success", handleSwapComplete);
-  }, [addXP]);
+    if (activeSection === "swap" || window.location.hash === "#swap-portal") {
+      const pending = sessionStorage.getItem('pendingNFTPurchase');
+      if (pending) {
+        try {
+          setPendingNFT(JSON.parse(pending));
+        } catch (e) {
+          console.error('Failed to parse pending NFT:', e);
+        }
+      }
+    }
+  }, [activeSection]);
+  
+  // Handle swap completion and award XP (requires on-chain transaction)
+  const handleSwapComplete = useCallback((transactionHash?: string) => {
+    if (transactionHash) {
+      // Only award XP for verified on-chain transactions
+      addXP("SWAP", { transactionHash }).catch(console.error);
+      console.log(`On-chain swap verified: ${transactionHash}. XP awarded!`);
+    } else {
+      console.log("Swap completed but transaction hash not verified. No XP awarded - swaps must be completed on-chain.");
+    }
+    // Clear pending NFT after successful swap (user can now complete purchase)
+    if (pendingNFT) {
+      console.log(`Swapped successfully! Ready to purchase ${pendingNFT.name}`);
+    }
+  }, [addXP, pendingNFT]);
 
   // Determine what to show based on active section
-  const showAll = activeSection === null || activeSection === "gallery";
-  const showMarketplace = showAll || activeSection === "marketplace";
-  const showCuratorNotes = showAll;
-  const showSwap = showAll || activeSection === "swap";
-  const showNFTExperience = showAll || activeSection === "mint" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
+  // Default (null) shows all sections except dashboard
+  const showDashboard = activeSection === "dashboard";
+  const showGallery = activeSection === null || activeSection === "gallery";
+  const showMarketplace = activeSection === null || activeSection === "marketplace";
+  const showCuratorNotes = activeSection === null;
+  const showSwap = activeSection === null || activeSection === "swap";
+  const showNFTExperience = activeSection === null || activeSection === "nft-experience" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
+  const showFarbaseMintGallery = activeSection === null || activeSection === "farbasemint-gallery";
+  const showProfile = activeSection === null || !showDashboard;
+  const showLeaderboard = activeSection === "leaderboard";
+  const showFavorites = activeSection === "favorites";
+  const showPortfolio = activeSection === "portfolio";
 
   return (
     <AppLayout>
       <div className="mx-auto w-full max-w-7xl space-y-10 px-6 py-12 sm:px-8 lg:px-10">
-        {/* User Profile - Visible per Base guidelines */}
-        <section id="profile" className="space-y-4">
-          <UserProfile />
-        </section>
-
-        {/* XP System Section */}
-        <section className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <XPDisplay />
-            <SBTClaim />
+        {/* FarcastMints Hero Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-blue-950 via-blue-900 to-blue-950 p-12 shadow-2xl">
+          {/* Decorative gradient overlay */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute inset-0 bg-linear-to-br from-cyan-500/20 to-transparent"></div>
+            <div className="absolute inset-0 bg-linear-to-tr from-purple-500/20 to-transparent"></div>
           </div>
-        </section>
-        {showMarketplace && (
-          <section className="space-y-6" id="marketplace">
-            <SectionHeading
-              eyebrow="Marketplace"
-              title="Live & trending drops"
-              description="Curate art-first auctions, reserve drops, and buy-now collections—all optimized for Base Account flows."
-            />
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 sm:gap-5">
-              {trendingDrops.slice(0, 4).map((drop) => (
-                <div
-                  key={drop.id}
-                  className="flex min-h-[320px] max-h-[320px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-slate-900/60 p-3 sm:p-4"
-                >
-                  <div className="relative mx-auto h-[160px] w-[160px] shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-[250px] sm:w-[250px]">
-                    <Image
-                      src={drop.image}
-                      alt={drop.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 160px, 250px"
-                    />
-                    <span
-                      className={`absolute left-2 top-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold sm:left-3 sm:top-3 sm:px-3 ${categoryStyles[drop.category]}`}
-                    >
-                      {drop.category.replace('-', ' ')}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex min-w-0 flex-1 flex-col gap-1 overflow-hidden sm:mt-3 sm:gap-1.5">
-                    <h3 className="truncate text-sm font-semibold text-white sm:text-base">{drop.title}</h3>
-                    <p className="text-xs text-slate-400">{drop.artist}</p>
-                    <p className="line-clamp-1 text-xs text-slate-300">{drop.description}</p>
-                  </div>
-                  <div className="mt-auto space-y-1.5 sm:space-y-2">
-                    <div className="grid grid-cols-2 gap-1.5 text-xs text-slate-400 sm:gap-2">
-                      <div className="rounded-lg border border-white/10 px-2 py-1 sm:px-2.5 sm:py-1.5">
-                        <p className="font-semibold text-white">Reserve</p>
-                        <p className="truncate text-xs">{drop.reserve}</p>
-                      </div>
-                      <div className="rounded-lg border border-white/10 px-2 py-1 sm:px-2.5 sm:py-1.5">
-                        <p className="font-semibold text-white">Status</p>
-                        <p className="truncate text-xs">{drop.endsIn}</p>
-                      </div>
-                    </div>
-                    <div className="rounded-lg border border-white/10 bg-slate-950/70 p-2 sm:p-2.5">
-                      <FarcasterShare 
-                        nftTitle={drop.title}
-                        nftImage={drop.image}
-                        customText={`Check out "${drop.title}" by ${drop.artist} on farbasenft! 🎨`}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
+          
+          {/* Content */}
+          <div className="relative z-10 space-y-4">
+            <h1 className="text-5xl font-bold text-white md:text-6xl">FarcastMints</h1>
+            <p className="max-w-2xl text-xl text-slate-100 md:text-2xl">
+              A next-gen NFT marketplace built on Base with seamless Farcaster integration
+            </p>
+            <div className="flex flex-wrap gap-3 pt-4">
+              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-200">
+                <span className="inline-block h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                Live on Base
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-400/10 px-4 py-2 text-sm font-medium text-purple-200">
+                <span className="inline-block h-2 w-2 rounded-full bg-purple-400"></span>
+                Multi-chain Ready
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
+                <span className="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
+                Farcaster Native
+              </span>
             </div>
+          </div>
+        </div>
+
+        {/* Dashboard Section - Full page, hides other content */}
+        {showDashboard && (
+          <section id="dashboard" className="space-y-6">
+            <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+            <Dashboard />
           </section>
         )}
 
-        {showCuratorNotes && (
-          <section className="space-y-5" id="curator-notes">
-            <SectionHeading
-              eyebrow="Curation"
-              title="Curator notes"
-              description="Onboard collectors instantly—no wallet pop-ups, no email gates."
-            />
-            <div className="grid gap-6 md:grid-cols-3">
-              {curatorNotes.map((note) => (
-                <div key={note.title} className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
-                  <p className="text-sm font-semibold text-white">{note.title}</p>
-                  <p className="mt-3 text-sm text-slate-300">{note.body}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        {/* All other content hidden when dashboard is active */}
+        {!showDashboard && (
+          <>
+            {/* User Profile - Always visible when not on Dashboard */}
+            {showProfile && (
+              <section id="profile" className="space-y-4">
+                <UserProfile />
+              </section>
+            )}
 
-        {showSwap && (
-          <section
-            id="swap-portal"
-            className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/60 p-6"
-          >
-            <SectionHeading
-              eyebrow="Swap Portal"
-              title="Rebalance on Base without leaving farbasenft"
-              description="Powered by OnchainKit swap components and the Base aggregator so collectors can move between ETH, USDC, and community tokens in a couple of taps."
-            />
-            <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-              <div className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
-                <SwapWrapper
-                  from={swapFromTokens}
-                  to={swapToTokens}
-                  experimental={{ useAggregator: true }}
-                  title="Swap on Base"
-                  headerLeftContent={
-                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-slate-200">
-                      Base L2
-                    </span>
-                  }
+            {/* XP System Section - Always visible when not on Dashboard */}
+            <section className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <XPDisplay />
+                <SBTClaim />
+              </div>
+            </section>
+
+            {/* FarbaseMint NFT Gallery - Toggle with farbasemint-gallery section */}
+            {showFarbaseMintGallery && (
+              <section className="space-y-6" id="farbasemint-gallery">
+                <FarbaseMintNFTGallery initialTab="trending" />
+              </section>
+            )}
+
+            {/* Marketplace Section - Show on default or marketplace section */}
+            {showMarketplace && (
+              <section className="space-y-6" id="marketplace">
+                <SectionHeading
+                  eyebrow="Marketplace"
+                  title="Live & trending drops"
+                  description="Curate art-first auctions, reserve drops, and buy-now collections—all optimized for Base Account flows."
                 />
-              </div>
-              <div className="space-y-4 rounded-2xl border border-white/5 bg-slate-900/60 p-5">
-                <h3 className="text-lg font-semibold text-white">Swap highlights</h3>
-                <ul className="space-y-3 text-sm text-slate-200">
-                  {swapHighlights.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-cyan-400" />
-                      <span>{item}</span>
-                    </li>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 sm:gap-5">
+                  {trendingDrops.slice(0, 4).map((drop) => (
+                    <div
+                      key={drop.id}
+                      className="flex flex-col overflow-hidden rounded-2xl border border-white/5 bg-slate-900/60 p-3 sm:p-4 hover:border-white/20 transition"
+                    >
+                      <div className="relative mx-auto h-[140px] w-[140px] shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-[180px] sm:w-[180px]">
+                        <Image
+                          src={drop.image}
+                          alt={drop.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 140px, 180px"
+                        />
+                        <span
+                          className={`absolute left-2 top-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold sm:left-3 sm:top-3 sm:px-3 ${categoryStyles[drop.category]}`}
+                        >
+                          {drop.category.replace('-', ' ')}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex min-w-0 flex-1 flex-col gap-1 overflow-hidden sm:mt-3 sm:gap-1.5">
+                        <h3 className="truncate text-sm font-semibold text-white sm:text-base">{drop.title}</h3>
+                        <p className="text-xs text-slate-400">{drop.artist}</p>
+                        <p className="line-clamp-1 text-xs text-slate-300">{drop.description}</p>
+                      </div>
+                      <div className="mt-auto space-y-2 sm:space-y-2.5">
+                        <div className="grid grid-cols-2 gap-1.5 text-xs text-slate-400 sm:gap-2">
+                          <div className="rounded-lg border border-white/10 px-2 py-1 sm:px-2.5 sm:py-1.5 bg-slate-950/40">
+                            <p className="font-semibold text-white text-xs">Reserve</p>
+                            <p className="truncate text-xs text-cyan-300 font-medium">{drop.reserve}</p>
+                          </div>
+                          <div className="rounded-lg border border-white/10 px-2 py-1 sm:px-2.5 sm:py-1.5 bg-slate-950/40">
+                            <p className="font-semibold text-white text-xs">Ends In</p>
+                            <p className="truncate text-xs text-purple-300 font-medium">{drop.endsIn}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-1.5 sm:gap-2">
+                          <button 
+                            onClick={() => setActiveSection("buy")}
+                            className="flex-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 px-3 py-2 text-xs font-semibold text-emerald-300 transition"
+                          >
+                            Buy
+                          </button>
+                          <button 
+                            onClick={() => setSellNFT(drop)}
+                            className="flex-1 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 border border-orange-400/50 px-3 py-2 text-xs font-semibold text-orange-300 transition"
+                          >
+                            Sell
+                          </button>
+                          <button 
+                            onClick={() => setShareNFT(drop)}
+                            className="px-2 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-800 border border-slate-600 text-slate-300 hover:text-white transition" 
+                            title="Share on Farcaster"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
-              </div>
-            </div>
-          </section>
-        )}
+                </div>
+              </section>
+            )}
 
-        {showNFTExperience && (
-          <section className="space-y-5" id="nft-experience">
-            <SectionHeading
-              eyebrow="Mint · Sell · Collect"
-              title="Manage NFTs end-to-end inside farbasenft"
-              description="Connect a wallet, resolve Basenames, mint new works, and interact with your marketplace contracts without leaving the mini app."
-            />
-            <NFTActions />
-          </section>
+            {/* Curator Notes - Show on default view only */}
+            {showCuratorNotes && (
+              <section className="space-y-5" id="curator-notes">
+                <SectionHeading
+                  eyebrow="Curation"
+                  title="Curator notes"
+                  description="Onboard collectors instantly—no wallet pop-ups, no email gates."
+                />
+                <div className="grid gap-6 md:grid-cols-3">
+                  {curatorNotes.map((note) => (
+                    <div key={note.title} className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
+                      <p className="text-sm font-semibold text-white">{note.title}</p>
+                      <p className="mt-3 text-sm text-slate-300">{note.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Swap Portal - Show on default or swap section */}
+            {showSwap && (
+              <section
+                id="swap-portal"
+                className="space-y-6 rounded-3xl border border-cyan-500/20 bg-linear-to-br from-slate-900/80 to-slate-900/60 p-6 shadow-xl shadow-cyan-500/5"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs uppercase tracking-[0.35em] text-cyan-400">Swap Portal</span>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-300">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      Live
+                    </span>
+                  </div>
+                  <h2 className="text-3xl font-semibold text-white">Rebalance on Base L2</h2>
+                  <p className="text-base text-slate-300 max-w-2xl">
+                    Powered by OnchainKit aggregator. Swap between ETH, stablecoins, and community tokens with the best rates—all without leaving your NFT journey.
+                  </p>
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+                  <div className="rounded-2xl border border-cyan-500/20 bg-slate-900/80 p-6 shadow-lg">
+                    <div className="mb-4 flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-slate-200">Exchange Tokens</h3>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
+                          Base L2
+                        </span>
+                        <span className="text-xs text-slate-400">Best Rates</span>
+                      </div>
+                    </div>
+                    <SwapWrapper
+                      from={swapFromTokens}
+                      to={swapToTokens}
+                      experimental={{ useAggregator: true }}
+                      title=""
+                      onSwapComplete={handleSwapComplete}
+                    />
+                    <div className="mt-4 flex items-center gap-2 rounded-lg border border-white/5 bg-slate-950/50 p-3">
+                      <svg className="h-4 w-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="text-xs text-slate-400">
+                        Rates are aggregated from multiple DEXs on Base. You always get the best available price.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    {/* Pending NFT Purchase Info */}
+                    {pendingNFT && (
+                      <div className="rounded-2xl border border-emerald-500/30 bg-linear-to-br from-emerald-900/20 to-slate-900/60 p-5">
+                        <div className="mb-3 flex items-center gap-2">
+                          <svg className="h-5 w-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <h4 className="text-sm font-semibold text-white">Pending Purchase</h4>
+                        </div>
+                        <div className="mb-3 space-y-2">
+                          <p className="text-xs text-slate-300">{pendingNFT.name}</p>
+                          <p className="text-sm font-bold text-emerald-300">Price: {pendingNFT.price} ETH</p>
+                        </div>
+                        <p className="text-xs text-slate-400">
+                          Swap ETH or USDC to ensure you have enough balance, then return to the gallery to complete your purchase.
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
+                      <h3 className="mb-4 text-lg font-semibold text-white">Why Swap on Base?</h3>
+                      <ul className="space-y-3 text-sm text-slate-200">
+                        {swapHighlights.map((item, index) => (
+                          <li key={item} className="flex items-start gap-3">
+                            <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-cyan-400 shrink-0" />
+                            <span className="flex-1">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="rounded-2xl border border-purple-500/20 bg-linear-to-br from-purple-900/20 to-slate-900/60 p-5">
+                      <div className="mb-3 flex items-center gap-2">
+                        <svg className="h-5 w-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <h4 className="text-sm font-semibold text-white">Earn XP Rewards</h4>
+                      </div>
+                      <p className="text-xs text-slate-300">
+                        Complete on-chain swaps to earn XP and unlock exclusive perks. Only verified blockchain transactions count!
+                      </p>
+                    </div>
+
+                    <XPDisplay />
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* NFT Experience - Show for buy/sell/listings or when viewing NFT section */}
+            {showNFTExperience && (
+              <section className="space-y-5" id="nft-experience">
+                <SectionHeading
+                  eyebrow="Sell · Collect"
+                  title="Manage NFTs end-to-end inside farbasenft"
+                  description="Connect a wallet, resolve Basenames, and interact with your marketplace contracts without leaving the mini app."
+                />
+                <NFTActions />
+              </section>
+            )}
+
+            {/* Leaderboard Section */}
+            {showLeaderboard && (
+              <section className="space-y-6" id="leaderboard">
+                <Leaderboard />
+              </section>
+            )}
+
+            {/* Favorites Section */}
+            {showFavorites && (
+              <section className="space-y-6" id="favorites">
+                <Favorites />
+              </section>
+            )}
+
+            {/* Portfolio Section */}
+            {showPortfolio && (
+              <section className="space-y-6" id="portfolio">
+                <Portfolio />
+              </section>
+            )}
+          </>
         )}
       </div>
+
+      {/* NFT Sell Modal */}
+      {sellNFT && (
+        <NFTSellModal nft={sellNFT} onClose={() => setSellNFT(null)} />
+      )}
+
+      {/* Share Modal */}
+      {shareNFT && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-linear-to-b from-slate-800 to-slate-900 rounded-2xl p-6 max-w-md w-full border border-slate-700 shadow-2xl">
+            {/* Close Button */}
+            <button
+              onClick={() => setShareNFT(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
+              title="Close share modal"
+              aria-label="Close"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* NFT Preview */}
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-white mb-4">{shareNFT.title}</h2>
+              <div className="bg-slate-700 rounded-lg overflow-hidden mb-4">
+                <img
+                  src={shareNFT.image}
+                  alt={shareNFT.title}
+                  className="w-full h-40 object-cover"
+                />
+              </div>
+              <p className="text-sm text-slate-300">By {shareNFT.artist}</p>
+              {shareNFT.description && (
+                <p className="text-sm text-slate-400 mt-2 line-clamp-2">{shareNFT.description}</p>
+              )}
+            </div>
+
+            {/* Share URL */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
+                Shareable Link
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${typeof window !== 'undefined' ? window.location.origin : ''}/nft/${shareNFT.id}`}
+                  className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-300 text-sm truncate"
+                  title="Shareable link"
+                  placeholder="Share link"
+                  aria-label="Shareable link"
+                />
+                <button
+                  onClick={() => {
+                    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/nft/${shareNFT.id}`;
+                    navigator.clipboard.writeText(url);
+                    alert('Link copied to clipboard!');
+                  }}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            {/* Share Message */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
+                Share Message
+              </label>
+              <textarea
+                defaultValue={`Check out "${shareNFT.title}" by ${shareNFT.artist} on FarbaseNFT! 🎨`}
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-300 text-sm resize-none h-20"
+                title="Share message"
+                placeholder="Share message"
+                aria-label="Share message"
+              />
+            </div>
+
+            {/* Share Options */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/nft/${shareNFT.id}`;
+                  const text = `Check out "${shareNFT.title}" by ${shareNFT.artist} on FarbaseNFT! 🎨`;
+                  
+                  if (navigator.share) {
+                    navigator.share({
+                      title: shareNFT.title,
+                      text: text,
+                      url: url,
+                    });
+                  } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(`${text}\n${url}`);
+                    alert('Link copied to clipboard!');
+                  }
+                }}
+                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Share
+              </button>
+              <button
+                onClick={() => setShareNFT(null)}
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }

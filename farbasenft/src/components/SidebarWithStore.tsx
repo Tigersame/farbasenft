@@ -103,6 +103,16 @@ function ListIcon() {
   );
 }
 
+function DashboardIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 6.75c0-.621.504-1.125 1.125-1.125h2.25C13.497 5.625 14 6.129 14 6.75v13.125c0 .621-.504 1.125-1.125 1.125h-2.25c-.621 0-1.125-.504-1.125-1.125V6.75Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 6.75c0-.621.504-1.125 1.125-1.125H20.25c.621 0 1.125.504 1.125 1.125v13.125c0 .621-.504 1.125-1.125 1.125h-2.625c-.621 0-1.125-.504-1.125-1.125V6.75Z" />
+    </svg>
+  );
+}
+
 function SwapIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
@@ -175,13 +185,18 @@ export default function SidebarWithStore() {
 
   const staticLinks: StaticLink[] = useMemo(
     () => [
+      { id: "dashboard", label: "Dashboard", section: "dashboard", icon: <DashboardIcon /> },
       { id: "nft", label: "NFT Gallery", section: "gallery", icon: <GalleryIcon /> },
-      { id: "nft-mint", label: "Mint NFT", section: "mint", icon: <PenIcon /> },
+      { id: "farbasemint", label: "FarbaseMint Gallery", section: "farbasemint-gallery", icon: <GalleryIcon /> },
+      { id: "nft-mint", label: "Mint NFT", href: "/mint", icon: <PenIcon /> },
       { id: "nft-buy", label: "Buy NFT", section: "buy", icon: <BuyIcon /> },
       { id: "nft-sell", label: "Sell NFT", section: "sell", icon: <SellIcon /> },
       { id: "nft-list", label: "Listings", section: "listings", icon: <ListIcon /> },
       { id: "nft-swap", label: "Swap", section: "swap", icon: <SwapIcon /> },
       { id: "nft-search", label: "Search", section: "marketplace", icon: <SearchIcon /> },
+      { id: "portfolio", label: "Portfolio", section: "portfolio", icon: <DashboardIcon /> },
+      { id: "favorites", label: "Favorites", section: "favorites", icon: <GalleryIcon /> },
+      { id: "leaderboard", label: "Leaderboard", section: "leaderboard", icon: <NetworkIcon /> },
     ],
     [],
   );
@@ -209,10 +224,14 @@ export default function SidebarWithStore() {
       }),
     );
     
-    // Also dispatch panel event for NFT actions that need panel switching
-    if (section === "mint" || section === "buy" || section === "sell" || section === "listings") {
+    // Handle navigation based on section
+    if (section === "mint") {
+      window.location.href = "/mint";
+      return;
+    } else if (section === "dashboard") {
+      window.location.hash = "dashboard";
+    } else if (section === "buy" || section === "sell" || section === "listings") {
       const panelMap: Record<string, string> = {
-        mint: "mint",
         buy: "buy",
         sell: "list",
         listings: "list",
@@ -227,6 +246,8 @@ export default function SidebarWithStore() {
       window.location.hash = "swap-portal";
     } else if (section === "marketplace") {
       window.location.hash = "marketplace";
+    } else if (section === "farbasemint-gallery") {
+      window.location.hash = "farbasemint-gallery";
     } else if (section === "gallery") {
       window.location.hash = "";
     }

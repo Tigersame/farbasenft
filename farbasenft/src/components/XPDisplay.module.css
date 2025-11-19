@@ -1,0 +1,12 @@
+.progressBar {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: rgb(30, 41, 59);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(to right, rgb(6, 182, 212), rgb(168, 85, 247));
+  transition: width 300ms ease-in-out;
+}

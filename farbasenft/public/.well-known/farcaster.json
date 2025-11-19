@@ -1,32 +1,36 @@
 {
   "accountAssociation": {
-    "header": "farcaster-miniapp",
-    "payload": "YOUR_PAYLOAD_HERE",
-    "signature": "YOUR_SIGNATURE_HERE"
+    "header": "eyJmaWQiOjAsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ==",
+    "payload": "eyJkb21haW4iOiJmYXJiYXNlbmZ0Lnh5eiJ9",
+    "signature": "GENERATE_VIA_MANIFEST_TOOL"
   },
   "miniapp": {
     "version": "1",
-    "name": "farbasenft",
-    "homeUrl": "https://your-domain.com",
-    "iconUrl": "https://your-domain.com/icon.svg",
-    "splashImageUrl": "https://your-domain.com/splash.svg",
+    "name": "FarcastMints",
+    "homeUrl": "https://farbasenft.xyz",
+    "iconUrl": "https://farbasenft.xyz/icon.svg",
+    "splashImageUrl": "https://farbasenft.xyz/splash.svg",
     "splashBackgroundColor": "#030712",
-    "webhookUrl": "https://your-domain.com/api/webhook",
-    "subtitle": "Foundation-inspired NFT gallery",
-    "description": "Curate digital art auctions, reserve drops, and mini app embeds inspired by Foundation and powered by Base.",
+    "webhookUrl": "https://farbasenft.xyz/api/webhook",
+    "subtitle": "Discover digital art reimagined",
+    "description": "Curated NFT showcases, timed auctions, and artist-first storytelling inspired by Foundation. Trade seamlessly on Base with Farcaster integration.",
     "screenshotUrls": [
-      "https://your-domain.com/screenshots/1.png",
-      "https://your-domain.com/screenshots/2.png",
-      "https://your-domain.com/screenshots/3.png"
+      "https://farbasenft.xyz/splash.svg",
+      "https://farbasenft.xyz/hero.svg"
     ],
     "primaryCategory": "art",
-    "tags": ["nft", "art", "auctions", "base"],
-    "heroImageUrl": "https://your-domain.com/hero.svg",
+    "tags": ["nft", "auctions", "art", "base", "farcaster", "marketplace"],
+    "heroImageUrl": "https://farbasenft.xyz/hero.svg",
     "tagline": "Where onchain curators meet collectors.",
-    "ogTitle": "farbasenft",
-    "ogDescription": "Launch the farbasenft gallery inside Base.",
-    "ogImageUrl": "https://your-domain.com/og.png",
-    "noindex": true
+    "ogTitle": "FarcastMints - NFT Marketplace on Base",
+    "ogDescription": "A boutique NFT marketplace experience crafted for Base mini apps with seamless Farcaster integration.",
+    "ogImageUrl": "https://farbasenft.xyz/hero.svg",
+    "requiredChains": ["eip155:8453"],
+    "requiredCapabilities": [
+      "wallet.getEthereumProvider",
+      "actions.signIn",
+      "actions.ready"
+    ]
   }
 }
 

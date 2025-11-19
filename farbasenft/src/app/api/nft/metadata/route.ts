@@ -3,6 +3,7 @@ import { createPublicClient, http } from "viem";
 import { base } from "viem/chains";
 import { erc721Abi } from "viem";
 import { fetchNFTMetadata } from "@/lib/tatum";
+import { CACHE_5MIN } from "@/lib/apiCache";
 
 /**
  * API route for fetching NFT metadata
@@ -21,6 +22,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Use very aggressive caching (30 minutes) for metadata to prevent rate limiting
+    const cacheHeaders = {
+      'Cache-Control': 'public, max-age=1800, s-maxage=1800', // 30 minutes
+      'CDN-Cache-Control': 'max-age=1800',
+    };
+
     // Try Tatum API first if available
     if (process.env.TATUM_API_KEY) {
       try {
@@ -33,7 +40,7 @@ export async function GET(request: NextRequest) {
             attributes: tatumMetadata.attributes || [],
             external_url: tatumMetadata.external_url,
             source: "tatum",
-          });
+          }, { headers: cacheHeaders });
         }
       } catch (tatumError) {
         console.log("Tatum API failed, falling back to direct contract read:", tatumError);
@@ -90,7 +97,7 @@ export async function GET(request: NextRequest) {
       attributes: metadata.attributes || [],
       external_url: metadata.external_url,
       source: "contract",
-    });
+    }, { headers: cacheHeaders });
   } catch (error) {
     console.error("NFT metadata fetch error:", error);
     return NextResponse.json(

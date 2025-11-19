@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { XP_REWARDS, type XPAction, type UserXP, type XPTransaction } from "@/lib/xp";
+import { CACHE_5MIN, CACHE_NONE } from "@/lib/apiCache";
 
 // In-memory storage (replace with database in production)
 const xpStorage = new Map<string, UserXP>();
+// Track recent XP transactions to prevent duplicates (wallet -> action -> timestamp)
+const recentTransactions = new Map<string, Map<XPAction, number>>();
+const DUPLICATE_PREVENT_WINDOW = 5000; // 5 seconds
 
 /**
  * GET /api/xp?wallet=0x...
@@ -27,7 +31,13 @@ export async function GET(request: NextRequest) {
     transactions: [],
   };
 
-  return NextResponse.json(userXP);
+  // Use 10-minute cache for XP data to prevent rate limiting
+  const cacheHeaders = {
+    'Cache-Control': 'public, max-age=600, s-maxage=600', // 10 minutes
+    'CDN-Cache-Control': 'max-age=600',
+  };
+
+  return NextResponse.json(userXP, { headers: cacheHeaders });
 }
 
 /**
@@ -57,6 +67,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log(`[XP API] Processing ${action} for wallet ${walletAddress}`);
+
+    // Check for duplicate transactions (same action within 5 seconds)
+    const walletTransactions = recentTransactions.get(walletAddress);
+    if (walletTransactions) {
+      const lastActionTime = walletTransactions.get(action as XPAction);
+      if (lastActionTime && Date.now() - lastActionTime < DUPLICATE_PREVENT_WINDOW) {
+        console.log(`[XP API] Duplicate request prevented for ${action}`);
+        // Return existing user data without adding XP
+        const userXP = xpStorage.get(walletAddress);
+        return NextResponse.json({
+          success: false,
+          message: "Duplicate request - XP already claimed",
+          userXP: userXP || {
+            walletAddress,
+            totalXP: 0,
+            level: 0,
+            sbtClaimed: false,
+            transactions: [],
+          },
+        }, { status: 429 });
+      }
+    }
+
+    // Track this transaction attempt
+    if (!recentTransactions.has(walletAddress)) {
+      recentTransactions.set(walletAddress, new Map());
+    }
+    recentTransactions.get(walletAddress)!.set(action as XPAction, Date.now());
+
     // Get or create user XP
     let userXP: UserXP = xpStorage.get(walletAddress) || {
       walletAddress,
@@ -80,6 +120,31 @@ export async function POST(request: NextRequest) {
       userXP.lastLoginDate = today;
     }
 
+    // Prevent duplicate SBT claims
+    if (action === "SBT_CLAIM" && userXP.sbtClaimed) {
+      return NextResponse.json({
+        success: false,
+        message: "SBT already claimed for this wallet",
+        userXP,
+      }, { status: 400 });
+    }
+
+    // For SWAP action, require transaction hash verification
+    if (action === "SWAP") {
+      if (!metadata?.transactionHash) {
+        return NextResponse.json({
+          success: false,
+          message: "Swap action requires verified transaction hash. Only on-chain swaps are rewarded.",
+          userXP,
+        }, { status: 400 });
+      }
+    }
+
+    // Mark SBT as claimed when SBT_CLAIM action is processed
+    if (action === "SBT_CLAIM") {
+      userXP.sbtClaimed = true;
+    }
+
     // Create transaction
     const transaction: XPTransaction = {
       id: `${Date.now()}-${Math.random()}`,
@@ -94,6 +159,8 @@ export async function POST(request: NextRequest) {
     userXP.totalXP += xpAmount;
     userXP.level = Math.floor(Math.sqrt(userXP.totalXP / 100));
     userXP.transactions.push(transaction);
+
+    console.log(`[XP API] ✓ Award ${xpAmount} XP for ${action}. New total: ${userXP.totalXP} XP, Level: ${userXP.level}`);
 
     // Keep only last 100 transactions
     if (userXP.transactions.length > 100) {

@@ -38,6 +38,13 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Hardhat
+cache/
+artifacts/
+.cache/
+typechain/
+typechain-types/
+
 # Private keys and secrets
 *.key
 *.pem
@@ -45,6 +52,9 @@ yarn-error.log*
 *.pfx
 secrets/
 *.secret
+*_private_key*
+*_api_key*
+.private
 
 # Logs
 *.log

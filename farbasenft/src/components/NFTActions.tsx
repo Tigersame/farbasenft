@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Connected } from "@coinbase/onchainkit";
 import { Identity, Avatar, Name } from "@coinbase/onchainkit/identity";
-import { NFTMintCard } from "@coinbase/onchainkit/nft";
 import { parseAbi, parseEther, type Abi } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
 
@@ -14,10 +13,6 @@ import { FarcasterShare } from "@/components/FarcasterShare";
 import { SIDEBAR_PANEL_EVENT } from "@/components/SidebarWithStore";
 import { useXP } from "@/hooks/useXP";
 import { getImageDimensions, validateImageDimensions, formatAspectRatio, type ImageValidationResult } from "@/lib/imageValidation";
-
-const mintContractAddress = process.env
-  .NEXT_PUBLIC_NFT_MINT_CONTRACT_ADDRESS as `0x${string}` | undefined;
-const mintTokenId = process.env.NEXT_PUBLIC_NFT_MINT_TOKEN_ID;
 
 const marketplaceAddress = process.env
   .NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS as `0x${string}` | undefined;
@@ -51,7 +46,6 @@ const mockActivity = [
 
 const nftPanels = [
   { id: "overview", label: "Overview", badge: "Summary" },
-  { id: "mint", label: "Mint", badge: "Primary" },
   { id: "list", label: "Sell", badge: "Orders" },
   { id: "buy", label: "Buy", badge: "Sweep" },
   { id: "swap", label: "Swap", badge: "Liquidity" },
@@ -88,16 +82,6 @@ export function NFTActions() {
   const [listingLoading, setListingLoading] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
   const [activePanel, setActivePanel] = useState<string>("overview");
-  
-  // Image upload and preview states
-  const [mintImage, setMintImage] = useState<File | null>(null);
-  const [mintImagePreview, setMintImagePreview] = useState<string | null>(null);
-  const [mintImageValidation, setMintImageValidation] = useState<ImageValidationResult | null>(null);
-  const [mintName, setMintName] = useState("");
-  const [mintDescription, setMintDescription] = useState("");
-  const [mintUploading, setMintUploading] = useState(false);
-  const [mintMetadataUri, setMintMetadataUri] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // NFT preview states for listing/buying
   const [nftImageUrl, setNftImageUrl] = useState<string | null>(null);
@@ -188,135 +172,10 @@ export function NFTActions() {
     }
   };
 
-  // Handle image upload for minting
-  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.type.startsWith("image/")) {
-        setMintImage(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setMintImagePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-
-        // Validate image dimensions
-        try {
-          const dimensions = await getImageDimensions(file);
-          const validation = validateImageDimensions(dimensions.width, dimensions.height);
-          setMintImageValidation(validation);
-
-          // Show warnings/errors
-          if (validation.errors.length > 0) {
-            setSellState(`⚠️ Image validation: ${validation.errors.join("; ")}`);
-          } else if (validation.warnings.length > 0) {
-            setSellState(`ℹ️ ${validation.warnings.join("; ")}`);
-          }
-        } catch (error) {
-          console.error("Failed to validate image dimensions:", error);
-          setMintImageValidation(null);
-        }
-      } else {
-        alert("Please select an image file");
-      }
-    }
-  };
-
-  // Upload image and metadata to IPFS
-  const handleUploadToIPFS = async () => {
-    if (!mintImage || !mintName || !mintDescription) {
-      setSellState("Please fill in all fields and select an image.");
-      return;
-    }
-    try {
-      setMintUploading(true);
-      setSellState("Uploading image to IPFS...");
-      
-      // Upload image
-      const imageFormData = new FormData();
-      imageFormData.append("file", mintImage);
-      const imageResponse = await fetch("/api/ipfs/upload", {
-        method: "POST",
-        body: imageFormData,
-      });
-      
-      if (!imageResponse.ok) {
-        const errorData = await imageResponse.json().catch(() => ({ error: "Unknown error" }));
-        const errorMsg = errorData.message || errorData.error || "Image upload failed";
-        
-        // Provide helpful message for missing configuration
-        if (errorData.error === "IPFS upload not configured" || errorMsg.includes("PINATA_JWT")) {
-          throw new Error("IPFS upload is not configured. Please add PINATA_JWT to your .env.local file. See WALLET_SETUP.md for instructions.");
-        }
-        
-        throw new Error(errorMsg);
-      }
-      
-      const imageData = await imageResponse.json();
-      if (!imageData.IpfsHash && !imageData.ipfsHash) {
-        throw new Error("No IPFS hash returned from image upload");
-      }
-      
-      const imageHash = imageData.IpfsHash || imageData.ipfsHash;
-      const imageUrl = `https://gateway.pinata.cloud/ipfs/${imageHash}`;
-      setSellState("Image uploaded! Uploading metadata...");
-      
-      // Create metadata
-      const metadata = {
-        name: mintName,
-        description: mintDescription,
-        image: imageUrl,
-        attributes: [],
-      };
-      
-      // Upload metadata
-      const metadataResponse = await fetch("/api/ipfs/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ json: metadata }),
-      });
-      
-      if (!metadataResponse.ok) {
-        const errorData = await metadataResponse.json().catch(() => ({ error: "Unknown error" }));
-        const errorMsg = errorData.message || errorData.error || "Metadata upload failed";
-        
-        // Provide helpful message for missing configuration
-        if (errorData.error === "IPFS upload not configured" || errorMsg.includes("PINATA_JWT")) {
-          throw new Error("IPFS upload is not configured. Please add PINATA_JWT to your .env.local file. See WALLET_SETUP.md for instructions.");
-        }
-        
-        throw new Error(errorMsg);
-      }
-      
-      const metadataData = await metadataResponse.json();
-      if (!metadataData.IpfsHash && !metadataData.ipfsHash) {
-        throw new Error("No IPFS hash returned from metadata upload");
-      }
-      
-      const metadataHash = metadataData.IpfsHash || metadataData.ipfsHash;
-      const metadataUri = `https://gateway.pinata.cloud/ipfs/${metadataHash}`;
-      
-      setMintMetadataUri(metadataUri);
-      setSellState(`✅ Success! Metadata URI: ${metadataUri}`);
-      // Award XP for creating NFT (after successful upload)
-      try {
-        await addXP("NFT_CREATE", { name: mintName, metadataUri });
-      } catch (xpError) {
-        console.error("Failed to award XP for NFT create:", xpError);
-      }
-    } catch (error) {
-      console.error("IPFS upload error:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      setSellState(`❌ Upload failed: ${errorMessage}`);
-    } finally {
-      setMintUploading(false);
-    }
-  };
-
   // Fetch NFT metadata when token ID is entered
   useEffect(() => {
     const fetchNFTMetadata = async () => {
-      if (!tokenId || !mintContractAddress) {
+      if (!tokenId || !marketplaceAddress) {
         setNftImageUrl(null);
         setNftName(null);
         return;
@@ -331,7 +190,7 @@ export function NFTActions() {
       
       try {
         setFetchingNFT(true);
-        const response = await fetch(`/api/nft/metadata?contract=${mintContractAddress}&tokenId=${tokenId}`);
+        const response = await fetch(`/api/nft/metadata?contract=${marketplaceAddress}&tokenId=${tokenId}`);
         
         if (response.ok) {
           const data = await response.json();
@@ -355,13 +214,13 @@ export function NFTActions() {
     
     const timeoutId = setTimeout(fetchNFTMetadata, 500);
     return () => clearTimeout(timeoutId);
-  }, [tokenId, mintContractAddress]);
+  }, [tokenId, marketplaceAddress]);
 
   const IdentityHeader = () => {
     const { address } = useAccount();
     
     return (
-      <section className="overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-6">
+      <section className="overflow-hidden rounded-3xl border border-white/5 bg-linear-to-br from-slate-900 via-slate-950 to-slate-900 p-6">
         <Connected>
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
@@ -391,343 +250,6 @@ export function NFTActions() {
       </section>
     );
   };
-
-  const MintPanel = (withTip = true) => (
-    <section className="space-y-6 rounded-3xl border border-white/5 bg-slate-900/60 p-6">
-      <header className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-white">Mint new editions</h3>
-        <span className="rounded-full border border-emerald-400/40 px-3 py-1 text-xs font-semibold text-emerald-200">
-          Primary sale
-        </span>
-      </header>
-      <Connected>
-        {mintContractAddress ? (
-          <div className="space-y-6">
-            <NFTMintCard
-              contractAddress={mintContractAddress}
-              tokenId={mintTokenId}
-              className="overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-slate-900/40"
-            />
-            
-            {/* Custom Mint Form with Image Upload */}
-            <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-              <h4 className="mb-4 text-lg font-semibold text-white">Create & Upload NFT</h4>
-              <div className="space-y-4">
-                {/* Image Upload */}
-                <div className="space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                    NFT Image
-                  </label>
-                  <div className="mb-2 rounded-lg border border-blue-400/20 bg-blue-500/5 px-3 py-2">
-                    <p className="text-xs text-blue-200">
-                      <strong>ERC-721 Recommended:</strong> Width 320-1080px, Aspect ratio 1.91:1 to 4:5
-                    </p>
-                  </div>
-                  <div className="flex gap-4">
-                    {mintImagePreview ? (
-                      <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
-                        <Image
-                          src={mintImagePreview}
-                          alt="Preview"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex h-32 w-32 flex-shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-slate-900/50">
-                        <span className="text-xs text-slate-500">No image</span>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageSelect}
-                        className="hidden"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-slate-800"
-                      >
-                        {mintImagePreview ? "Change Image" : "Select Image"}
-                      </button>
-                      {mintImage && (
-                        <p className="mt-2 text-xs text-slate-400">{mintImage.name}</p>
-                      )}
-                      {mintImageValidation && (
-                        <div className={`mt-2 rounded-lg border p-2 ${
-                          mintImageValidation.isValid
-                            ? mintImageValidation.warnings.length > 0
-                              ? "border-amber-400/30 bg-amber-500/10"
-                              : "border-green-400/30 bg-green-500/10"
-                            : "border-red-400/30 bg-red-500/10"
-                        }`}>
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-slate-300">
-                              {mintImageValidation.dimensions.width} × {mintImageValidation.dimensions.height}px
-                            </span>
-                            <span className="text-slate-400">
-                              {formatAspectRatio(mintImageValidation.aspectRatio)}
-                            </span>
-                            {mintImageValidation.isValid && mintImageValidation.warnings.length === 0 && (
-                              <span className="text-green-300">✓ Valid</span>
-                      )}
-                    </div>
-                          {mintImageValidation.errors.length > 0 && (
-                            <div className="mt-1 text-xs text-red-300">
-                              {mintImageValidation.errors.map((error, i) => (
-                                <p key={i}>⚠️ {error}</p>
-                              ))}
-                            </div>
-                          )}
-                          {mintImageValidation.warnings.length > 0 && (
-                            <div className="mt-1 text-xs text-amber-300">
-                              {mintImageValidation.warnings.map((warning, i) => (
-                                <p key={i}>ℹ️ {warning}</p>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Name and Description */}
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                    NFT Name
-                    <input
-                      value={mintName}
-                      onChange={(e) => setMintName(e.target.value)}
-                      placeholder="My Awesome NFT"
-                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/40"
-                    />
-                  </label>
-                  <label className="space-y-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                    Description
-                    <input
-                      value={mintDescription}
-                      onChange={(e) => setMintDescription(e.target.value)}
-                      placeholder="A unique digital artwork"
-                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/40"
-                    />
-                  </label>
-                </div>
-
-                {/* Upload to IPFS */}
-                <button
-                  type="button"
-                  onClick={handleUploadToIPFS}
-                  disabled={mintUploading || !mintImage || !mintName || !mintDescription}
-                  className="w-full rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-                >
-                  {mintUploading ? "Uploading to IPFS..." : "Upload to IPFS"}
-                </button>
-                
-                {mintMetadataUri && (
-                  <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4">
-                    <p className="text-xs font-semibold text-emerald-200">✅ Metadata URI:</p>
-                    <p className="mt-1 break-all text-xs text-emerald-300">{mintMetadataUri}</p>
-                    <p className="mt-2 text-xs text-emerald-200/70">Copy this URI to use when minting your NFT</p>
-                  </div>
-                )}
-                {sellState && (
-                  <div className={`rounded-xl border p-4 ${
-                    sellState.includes("✅") || sellState.includes("Success")
-                      ? "border-emerald-400/30 bg-emerald-500/10"
-                      : sellState.includes("❌") || sellState.includes("failed")
-                      ? "border-red-400/30 bg-red-500/10"
-                      : "border-sky-400/30 bg-sky-500/10"
-                  }`}>
-                    <p className={`text-xs ${
-                      sellState.includes("✅") || sellState.includes("Success")
-                        ? "text-emerald-200"
-                        : sellState.includes("❌") || sellState.includes("failed")
-                        ? "text-red-200"
-                        : "text-sky-200"
-                    }`}>
-                      {sellState}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <Warning>
-              Provide <code>NEXT_PUBLIC_NFT_MINT_CONTRACT_ADDRESS</code> (and optional <code>
-                NEXT_PUBLIC_NFT_MINT_TOKEN_ID
-              </code>) to render the live mint card.
-            </Warning>
-            
-            {/* Show custom mint form even without contract address */}
-            <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-              <h4 className="mb-4 text-lg font-semibold text-white">Create & Upload NFT</h4>
-              <div className="space-y-4">
-                {/* Image Upload */}
-                <div className="space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                    NFT Image
-                  </label>
-                  <div className="mb-2 rounded-lg border border-blue-400/20 bg-blue-500/5 px-3 py-2">
-                    <p className="text-xs text-blue-200">
-                      <strong>ERC-721 Recommended:</strong> Width 320-1080px, Aspect ratio 1.91:1 to 4:5
-                    </p>
-                  </div>
-                  <div className="flex gap-4">
-                    {mintImagePreview ? (
-                      <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-xl border border-white/10">
-                        <Image
-                          src={mintImagePreview}
-                          alt="Preview"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-slate-900/50">
-                        <span className="text-xs text-slate-500">No image</span>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageSelect}
-                        className="hidden"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-slate-800"
-                      >
-                        {mintImagePreview ? "Change Image" : "Select Image"}
-                      </button>
-                      {mintImage && (
-                        <p className="mt-2 text-xs text-slate-400">{mintImage.name}</p>
-                      )}
-                      {mintImageValidation && (
-                        <div className={`mt-2 rounded-lg border p-2 ${
-                          mintImageValidation.isValid
-                            ? mintImageValidation.warnings.length > 0
-                              ? "border-amber-400/30 bg-amber-500/10"
-                              : "border-green-400/30 bg-green-500/10"
-                            : "border-red-400/30 bg-red-500/10"
-                        }`}>
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-slate-300">
-                              {mintImageValidation.dimensions.width} × {mintImageValidation.dimensions.height}px
-                            </span>
-                            <span className="text-slate-400">
-                              {formatAspectRatio(mintImageValidation.aspectRatio)}
-                            </span>
-                            {mintImageValidation.isValid && mintImageValidation.warnings.length === 0 && (
-                              <span className="text-green-300">✓ Valid</span>
-                      )}
-                    </div>
-                          {mintImageValidation.errors.length > 0 && (
-                            <div className="mt-1 text-xs text-red-300">
-                              {mintImageValidation.errors.map((error, i) => (
-                                <p key={i}>⚠️ {error}</p>
-                              ))}
-                            </div>
-                          )}
-                          {mintImageValidation.warnings.length > 0 && (
-                            <div className="mt-1 text-xs text-amber-300">
-                              {mintImageValidation.warnings.map((warning, i) => (
-                                <p key={i}>ℹ️ {warning}</p>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Name and Description */}
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                    NFT Name
-                    <input
-                      value={mintName}
-                      onChange={(e) => setMintName(e.target.value)}
-                      placeholder="My Awesome NFT"
-                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/40"
-                    />
-                  </label>
-                  <label className="space-y-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                    Description
-                    <input
-                      value={mintDescription}
-                      onChange={(e) => setMintDescription(e.target.value)}
-                      placeholder="A unique digital artwork"
-                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/40"
-                    />
-                  </label>
-                </div>
-
-                {/* Upload to IPFS */}
-                <button
-                  type="button"
-                  onClick={handleUploadToIPFS}
-                  disabled={mintUploading || !mintImage || !mintName || !mintDescription}
-                  className="w-full rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-                >
-                  {mintUploading ? "Uploading to IPFS..." : "Upload to IPFS"}
-                </button>
-                
-                {mintMetadataUri && (
-                  <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4">
-                    <p className="text-xs font-semibold text-emerald-200">✅ Metadata URI:</p>
-                    <p className="mt-1 break-all text-xs text-emerald-300">{mintMetadataUri}</p>
-                    <p className="mt-2 text-xs text-emerald-200/70">Copy this URI to use when minting your NFT</p>
-                  </div>
-                )}
-                {sellState && (
-                  <div className={`rounded-xl border p-4 ${
-                    sellState.includes("✅") || sellState.includes("Success")
-                      ? "border-emerald-400/30 bg-emerald-500/10"
-                      : sellState.includes("❌") || sellState.includes("failed")
-                      ? "border-red-400/30 bg-red-500/10"
-                      : "border-sky-400/30 bg-sky-500/10"
-                  }`}>
-                    <p className={`text-xs ${
-                      sellState.includes("✅") || sellState.includes("Success")
-                        ? "text-emerald-200"
-                        : sellState.includes("❌") || sellState.includes("failed")
-                        ? "text-red-200"
-                        : "text-sky-200"
-                    }`}>
-                      {sellState}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-      </Connected>
-      {withTip ? (
-        <Tip>
-          The mint card mirrors Blur-style quick minting. Configure your OnchainKit API key with NFT permissions so media,
-          price, and lifecycle events resolve instantly. Upload your image and metadata to IPFS before minting.
-        </Tip>
-      ) : null}
-      <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5">
-        <h4 className="mb-3 text-sm font-semibold text-white">Share on Farcaster</h4>
-        <FarcasterShare 
-          nftTitle={mintName || "My NFT Collection"} 
-          nftImage={mintImagePreview || undefined}
-        />
-      </div>
-    </section>
-  );
 
   const ListingPanel = () => (
     <section className="space-y-6 rounded-3xl border border-white/5 bg-slate-900/60 p-6">
@@ -1030,14 +552,11 @@ export function NFTActions() {
           <div className="space-y-10">
             <IdentityHeader />
             <div className="grid gap-6 xl:grid-cols-2">
-              {MintPanel(false)}
               {ListingPreview()}
             </div>
             {ActivityPanel(true)}
           </div>
         );
-      case "mint":
-        return MintPanel();
       case "list":
         return ListingPanel();
       case "buy":
@@ -1049,7 +568,7 @@ export function NFTActions() {
       case "activity":
         return ActivityPanel();
       default:
-        return MintPanel();
+        return ListingPreview();
     }
   };
 

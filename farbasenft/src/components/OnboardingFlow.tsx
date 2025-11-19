@@ -22,8 +22,8 @@ const onboardingScreens = [
   },
   {
     id: 2,
-    title: "Create & Trade",
-    description: "Mint NFTs, list them for sale, and swap tokens—all in one place.",
+    title: "Trade & Collect",
+    description: "List NFTs for sale and swap tokens—all in one place.",
     image: "/splash.svg",
     cta: "Next",
   },
@@ -75,7 +75,7 @@ export function OnboardingFlow() {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4">
       <div className="flex max-w-md flex-col items-center space-y-6 text-center">
         {/* Image placeholder - replace with actual onboarding images */}
-        <div className="relative h-64 w-64 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-cyan-500/20 to-purple-500/20">
+        <div className="relative h-64 w-64 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-br from-cyan-500/20 to-purple-500/20">
           {screen.image && (
             <Image
               src={screen.image}

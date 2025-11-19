@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   WagmiProvider,
@@ -8,49 +8,75 @@ import {
   createStorage,
   cookieStorage,
   http,
+  useAccount,
 } from "wagmi";
 import { base, baseSepolia } from "viem/chains";
-import { coinbaseWallet, metaMask } from "wagmi/connectors";
-import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
+import { coinbaseWallet } from "wagmi/connectors";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 
-const wagmiConfig = createConfig({
-  chains: [base, baseSepolia],
-  connectors: [
-    farcasterMiniApp(),
-        coinbaseWallet({
-          appName: "farbasenft",
-          version: "4",
-        }),
-    metaMask(),
-  ],
-  storage: createStorage({ storage: cookieStorage }),
-  ssr: true,
-  transports: {
-    [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC_URL || undefined),
-    [baseSepolia.id]: http(),
-  },
-});
+// Lazy config creation to avoid SSR issues
+let wagmiConfig: any = null;
+
+const getWagmiConfig = () => {
+  if (wagmiConfig) return wagmiConfig;
+  
+  const baseRpcUrl =
+    process.env.NEXT_PUBLIC_BASE_RPC_URL || "https://mainnet.base.org";
+  const baseSepoliaRpcUrl =
+    process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org";
+
+  // Build connectors - use only Coinbase wallet to avoid conflicts with MetaMask
+  const connectors = [
+    coinbaseWallet({
+      appName: "farcastmints",
+      version: "4",
+    }),
+  ];
+
+  wagmiConfig = createConfig({
+    chains: [base, baseSepolia],
+    connectors,
+    storage: createStorage({ storage: cookieStorage }),
+    ssr: true,
+    transports: {
+      [base.id]: http(baseRpcUrl),
+      [baseSepolia.id]: http(baseSepoliaRpcUrl),
+    },
+  });
+
+  return wagmiConfig;
+};
 
 export function RootProvider({ children }: { children: ReactNode }) {
   const queryClient = useMemo(() => new QueryClient(), []);
+  const config = useMemo(() => getWagmiConfig(), []);
+  const [currentChain, setCurrentChain] = useState(base);
+
+  // Validate API key on mount
+  useEffect(() => {
+    const apiKey = process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY;
+    if (!apiKey) {
+      console.warn('⚠️ NEXT_PUBLIC_ONCHAINKIT_API_KEY is not set. Some features may not work.');
+      console.warn('Get a free key at: https://portal.cdp.coinbase.com/');
+    }
+  }, []);
 
   return (
-    <WagmiProvider config={wagmiConfig}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
+        <ChainDetector onChainChange={setCurrentChain} />
         <OnchainKitProvider
-          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-          projectId={process.env.NEXT_PUBLIC_CDP_PROJECT_ID || process.env.NEXT_PUBLIC_COINBASE_PROJECT_ID}
-          chain={base}
+          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || 'demo-key'}
+          chain={currentChain}
           miniKit={{ enabled: true, autoConnect: true }}
           config={{
             appearance: {
-              name: "farbasenft",
+              name: "farcastmints",
               mode: "dark",
-              theme: "base", // 'default' | 'base' | 'cyberpunk' | 'hacker'
+              theme: "base",
             },
-                wallet: {
-                  display: "modal",
+            wallet: {
+              display: "modal",
               termsUrl: process.env.NEXT_PUBLIC_TERMS_URL,
               privacyUrl: process.env.NEXT_PUBLIC_PRIVACY_URL,
               supportedWallets: {
@@ -66,4 +92,19 @@ export function RootProvider({ children }: { children: ReactNode }) {
       </QueryClientProvider>
     </WagmiProvider>
   );
+}
+
+// Sub-component to detect and report chain changes
+function ChainDetector({ onChainChange }: { onChainChange: (chain: any) => void }) {
+  const { chainId } = useAccount();
+
+  useEffect(() => {
+    if (chainId === 84532) {
+      onChainChange(baseSepolia);
+    } else {
+      onChainChange(base);
+    }
+  }, [chainId, onChainChange]);
+
+  return null;
 }
