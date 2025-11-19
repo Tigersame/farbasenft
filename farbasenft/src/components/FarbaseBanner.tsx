@@ -23,10 +23,31 @@ export function FarbaseBanner() {
 
         {/* Banner content */}
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-          {/* Farbase logo icon */}
-          <div className="flex-shrink-0">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-cyan-400 flex items-center justify-center bg-cyan-900/30 shadow-lg shadow-cyan-500/30">
-              <span className="text-cyan-300 font-bold text-2xl sm:text-3xl">f</span>
+          {/* Farcaster icon */}
+          <div className="shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/30">
+              {/* Farcaster Logo */}
+              <svg viewBox="0 0 256 256" className="w-16 h-16 sm:w-20 sm:h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="farcasterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#003366" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#001a4d" stopOpacity="1" />
+                  </linearGradient>
+                  <linearGradient id="farcasterBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#0099ff" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#0066cc" stopOpacity="1" />
+                  </linearGradient>
+                </defs>
+                {/* Outer circle background */}
+                <circle cx="128" cy="128" r="120" fill="url(#farcasterGradient)" stroke="url(#farcasterBorder)" strokeWidth="16" />
+                {/* Inner circle border */}
+                <circle cx="128" cy="128" r="95" fill="none" stroke="#0099ff" strokeWidth="8" opacity="0.6" />
+                {/* Farcaster 'f' icon */}
+                <g transform="translate(128, 128)">
+                  <path d="M -20 -35 L -20 35 M 0 -35 L 0 35 M -20 0 L 10 0 M -20 -35 L 10 -35" 
+                    stroke="#0099ff" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                </g>
+              </svg>
             </div>
           </div>
 
@@ -41,7 +62,7 @@ export function FarbaseBanner() {
           </div>
 
           {/* CTA Button */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <button className="px-6 sm:px-8 py-2 sm:py-3 bg-linear-to-r from-cyan-400 to-blue-400 hover:from-cyan-300 hover:to-blue-300 text-blue-950 font-bold rounded-lg shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition whitespace-nowrap">
               Get Started
             </button>
