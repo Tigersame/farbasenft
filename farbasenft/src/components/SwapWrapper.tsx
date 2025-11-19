@@ -40,7 +40,7 @@ export function SwapWrapper({
       const txHash = transactionHashRef.current;
       window.dispatchEvent(new CustomEvent("swap:success", { detail: { transactionHash: txHash } }));
       if (onSwapComplete) {
-        onSwapComplete(txHash || undefined);
+        onSwapComplete();
       }
     };
 
