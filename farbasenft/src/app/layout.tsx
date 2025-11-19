@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description:
     "An NFT marketplace on Base powered by Farcaster integration. Discover, mint, swap, and collect NFTs seamlessly.",
   icons: {
-    icon: "/icon.svg",
+    icon: "/favicon.svg",
   },
   metadataBase:
     process.env.NEXT_PUBLIC_APP_URL !== undefined

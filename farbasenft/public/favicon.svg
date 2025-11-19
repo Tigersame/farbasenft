@@ -1,0 +1,43 @@
+<svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor="#001a4d" stopOpacity="1" />
+      <stop offset="100%" stopColor="#000814" stopOpacity="1" />
+    </radialGradient>
+    <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#00d9ff" stopOpacity="1" />
+      <stop offset="100%" stopColor="#0066ff" stopOpacity="1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Outer dark background -->
+  <circle cx="128" cy="128" r="128" fill="url(#bgGradient)" />
+  
+  <!-- Inner dark blue circle -->
+  <circle cx="128" cy="128" r="115" fill="#001a4d" opacity="0.8" />
+  
+  <!-- Cyan border circle -->
+  <circle cx="128" cy="128" r="110" fill="none" stroke="url(#borderGradient)" strokeWidth="14" filter="url(#glow)" opacity="0.9" />
+  
+  <!-- Inner circle border -->
+  <circle cx="128" cy="128" r="98" fill="none" stroke="#00d9ff" strokeWidth="6" opacity="0.5" />
+  
+  <!-- Farcaster 'f' icon -->
+  <g transform="translate(128, 128)">
+    <!-- Vertical stem of 'f' -->
+    <path d="M -8 -48 L -8 48" stroke="#00d9ff" strokeWidth="18" strokeLinecap="round" fill="none" />
+    
+    <!-- Horizontal bar (top crossbar) -->
+    <path d="M -8 -32 L 32 -32" stroke="#00d9ff" strokeWidth="18" strokeLinecap="round" fill="none" />
+    
+    <!-- Horizontal bar (middle crossbar) -->
+    <path d="M -8 -2 L 24 -2" stroke="#00d9ff" strokeWidth="18" strokeLinecap="round" fill="none" />
+  </g>
+</svg>
