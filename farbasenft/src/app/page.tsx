@@ -23,6 +23,7 @@ import Leaderboard from "@/components/Leaderboard";
 import Favorites from "@/components/Favorites";
 import Portfolio from "@/components/Portfolio";
 import SearchFilters from "@/components/SearchFilters";
+import { FarbaseBanner } from "@/components/FarbaseBanner";
 
 const categoryStyles: Record<string, string> = {
   auction: "bg-purple-500/10 text-purple-200 ring-1 ring-purple-400/40",
@@ -277,6 +278,7 @@ export default function Page() {
 
   return (
     <AppLayout>
+      <FarbaseBanner />
       <div className="mx-auto w-full max-w-7xl space-y-10 px-6 py-12 sm:px-8 lg:px-10">
         {/* FarcastMints Hero Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-blue-950 via-blue-900 to-blue-950 p-12 shadow-2xl">
