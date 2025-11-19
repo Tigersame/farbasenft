@@ -144,7 +144,7 @@ export function WalletIntegration() {
             <div className="border-t border-cyan-500/20 p-6 bg-cyan-500/5">
               <div className="space-y-3 text-sm">
                 <div className="flex gap-3">
-                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 text-emerald-400 text-xs font-bold">
+                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 text-xs font-bold">
                     ✓
                   </div>
                   <p className="text-slate-300">
@@ -152,7 +152,7 @@ export function WalletIntegration() {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 text-emerald-400 text-xs font-bold">
+                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 text-xs font-bold">
                     ✓
                   </div>
                   <p className="text-slate-300">
@@ -160,7 +160,7 @@ export function WalletIntegration() {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 text-emerald-400 text-xs font-bold">
+                  <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 text-xs font-bold">
                     ✓
                   </div>
                   <p className="text-slate-300">

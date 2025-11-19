@@ -247,7 +247,7 @@ export default function Portfolio() {
                     <img
                       src={nft.image}
                       alt={nft.name}
-                      className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                      className="w-20 h-20 rounded-lg object-cover shrink-0"
                     />
 
                     {/* Info */}
@@ -269,7 +269,7 @@ export default function Portfolio() {
 
                     {/* P&L */}
                     <div
-                      className={`px-3 py-2 rounded text-right flex-shrink-0 ${
+                      className={`px-3 py-2 rounded text-right shrink-0 ${
                         isProfitable
                           ? 'bg-emerald-500/20 border border-emerald-500/30'
                           : 'bg-red-500/20 border border-red-500/30'

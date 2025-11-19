@@ -21,7 +21,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Main content area */}
       <div className="flex min-h-screen w-full flex-1 flex-col">
         {/* Sticky header */}
-        <header className="sticky top-0 z-40 border-b border-cyan-500/20 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900">
+        <header className="sticky top-0 z-40 border-b border-cyan-500/20 bg-linear-to-r from-slate-900 via-slate-950 to-slate-900">
           <div className="mx-auto flex w-full max-w-7xl items-start justify-between gap-4 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
             <div className="flex-1 space-y-1.5 min-w-0">
               <h1 className="text-xl font-semibold leading-tight text-white sm:text-2xl lg:text-3xl">

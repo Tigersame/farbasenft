@@ -209,6 +209,7 @@ export default function SearchFilters({ onFiltersChange, nfts }: SearchFilterPro
               Search: {filters.query}
               <button
                 onClick={() => handleFilterChange({ query: '' })}
+                title="Remove query filter"
                 className="hover:text-cyan-200"
               >
                 <X className="h-3 w-3" />
@@ -220,6 +221,7 @@ export default function SearchFilters({ onFiltersChange, nfts }: SearchFilterPro
               {filters.collection}
               <button
                 onClick={() => handleFilterChange({ collection: '' })}
+                title="Remove collection filter"
                 className="hover:text-cyan-200"
               >
                 <X className="h-3 w-3" />
@@ -231,6 +233,7 @@ export default function SearchFilters({ onFiltersChange, nfts }: SearchFilterPro
               {filters.rarity}
               <button
                 onClick={() => handleFilterChange({ rarity: '' })}
+                title="Remove rarity filter"
                 className="hover:text-cyan-200"
               >
                 <X className="h-3 w-3" />
@@ -242,6 +245,7 @@ export default function SearchFilters({ onFiltersChange, nfts }: SearchFilterPro
               {filters.priceMin} - {filters.priceMax} ETH
               <button
                 onClick={() => handleFilterChange({ priceMin: 0, priceMax: 100 })}
+                title="Remove price filter"
                 className="hover:text-cyan-200"
               >
                 <X className="h-3 w-3" />

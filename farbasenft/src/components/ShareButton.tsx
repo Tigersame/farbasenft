@@ -166,7 +166,7 @@ export function ShareModal({
               type="text"
               value={shareUrl}
               readOnly
-              className="flex-1 bg-slate-700 text-white text-sm rounded px-3 py-2 font-mono overflow-hidden text-xs"
+              className="flex-1 bg-slate-700 text-white text-xs rounded px-3 py-2 font-mono overflow-hidden"
             />
             <button
               onClick={() => {

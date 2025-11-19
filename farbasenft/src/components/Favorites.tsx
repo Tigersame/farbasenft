@@ -158,6 +158,7 @@ export default function Favorites() {
                       </button>
                       <button
                         onClick={() => setShowAddAlert(null)}
+                        title="Close alert dialog"
                         className="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300"
                       >
                         <X className="h-4 w-4" />

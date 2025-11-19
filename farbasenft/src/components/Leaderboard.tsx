@@ -133,9 +133,9 @@ export default function Leaderboard() {
             >
               {/* Rank Badge */}
               <div
-                className={`flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br ${getMedalColor(
+                className={`flex items-center justify-center w-12 h-12 rounded-full bg-linear-to-br ${getMedalColor(
                   entry.rank
-                )} flex-shrink-0`}
+                )} shrink-0`}
               >
                 <span className="text-lg font-bold text-white">{entry.rank}</span>
               </div>
@@ -166,7 +166,7 @@ export default function Leaderboard() {
               </div>
 
               {/* Achievements */}
-              <div className="hidden md:flex gap-1 flex-shrink-0">
+              <div className="hidden md:flex gap-1 shrink-0">
                 {entry.achievements.slice(0, 2).map((achievement, idx) => (
                   <span
                     key={idx}

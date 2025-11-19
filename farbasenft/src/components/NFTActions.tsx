@@ -266,7 +266,7 @@ export function NFTActions() {
             <div className="rounded-xl border border-white/10 bg-slate-900/50 p-4">
               <p className="mb-2 text-xs font-semibold text-slate-300">NFT Preview</p>
               <div className="flex gap-4">
-                <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
+                <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-white/10">
                   <Image
                     src={nftImageUrl}
                     alt={nftName || "NFT"}
@@ -391,7 +391,7 @@ export function NFTActions() {
             <div className="rounded-xl border border-white/10 bg-slate-900/50 p-4">
               <p className="mb-2 text-xs font-semibold text-slate-300">Listing Preview</p>
               <div className="flex gap-4">
-                <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
+                <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-white/10">
                   <Image
                     src={nftImageUrl}
                     alt={nftName || "NFT"}
@@ -583,7 +583,7 @@ export function NFTActions() {
               key={panel.id}
               type="button"
               onClick={() => setActivePanel(panel.id)}
-              aria-pressed={isActive}
+              aria-pressed={isActive ? 'true' : 'false'}
               className={`flex flex-1 items-center justify-between rounded-2xl border px-4 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-sky-400/40 lg:flex-none ${
                 isActive
                   ? "border-white/30 bg-white/10 text-white shadow-lg shadow-slate-900/40"

@@ -224,7 +224,7 @@ export default function FarbaseMintNFTGallery({ initialTab = 'live' }: { initial
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({length:6}).map((_,i) => (
-            <div key={i} className="animate-pulse bg-gradient-to-b from-black/60 to-black/40 rounded-2xl h-80" />
+            <div key={i} className="animate-pulse bg-linear-to-b from-black/60 to-black/40 rounded-2xl h-80" />
           ))}
         </div>
       )}
@@ -258,7 +258,7 @@ export default function FarbaseMintNFTGallery({ initialTab = 'live' }: { initial
                       onBuy={handleBuyNFT}
                     />
                   ) : (
-                    <div key={`empty-${virtualRow.index}-${idx}`} className="bg-gradient-to-b from-black/60 to-black/40 rounded-2xl h-80" />
+                    <div key={`empty-${virtualRow.index}-${idx}`} className="bg-linear-to-b from-black/60 to-black/40 rounded-2xl h-80" />
                   ))}
                 </div>
               );
@@ -282,9 +282,9 @@ export default function FarbaseMintNFTGallery({ initialTab = 'live' }: { initial
       {/* Insufficient Funds Warning Modal */}
       {showInsufficientFundsWarning && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-900/20 to-slate-900/60 p-8 max-w-md w-full mx-4 shadow-2xl">
+          <div className="rounded-2xl border border-red-500/30 bg-linear-to-br from-red-900/20 to-slate-900/60 p-8 max-w-md w-full mx-4 shadow-2xl">
             <div className="flex items-start gap-3 mb-4">
-              <svg className="h-6 w-6 text-red-400 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="h-6 w-6 text-red-400 shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
               <div>
@@ -384,7 +384,7 @@ function Card({ token, optimisticLikes, onLike, onMint, onSell, onBuy }: {
       </div>
 
       {/* Info Panel */}
-      <div className="p-4 bg-gradient-to-b from-gray-900/95 to-gray-950/95 backdrop-blur-sm">
+      <div className="p-4 bg-linear-to-b from-gray-900/95 to-gray-950/95 backdrop-blur-sm">
         <div className="flex items-center gap-3 mb-3">
           {avatar ? (
             <img src={avatar} alt={`${token.collection} avatar`} className="w-10 h-10 rounded-full border-2 border-white/10 object-cover shadow-md" />
@@ -425,7 +425,7 @@ function Card({ token, optimisticLikes, onLike, onMint, onSell, onBuy }: {
           >
             Buy
           </button>
-          <button onClick={onMint} className="py-2 px-3 rounded-lg text-sm font-bold bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white transition hover:scale-105" style={{boxShadow: `0 4px 12px rgba(${ACCENT_COLOR},0.3)`}}>
+          <button onClick={onMint} className="py-2 px-3 rounded-lg text-sm font-bold bg-linear-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white transition hover:scale-105" style={{boxShadow: `0 4px 12px rgba(${ACCENT_COLOR},0.3)`}}>
             Mint
           </button>
         </div>

@@ -78,7 +78,7 @@ export default function NFTListingModal({ nft, isOpen, onClose, onList }: NFTLis
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div 
-        className="relative w-full max-w-lg bg-gradient-to-br from-purple-950/95 via-black/95 to-violet-950/95 border border-violet-500/30 rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg bg-linear-to-br from-purple-950/95 via-black/95 to-violet-950/95 border border-violet-500/30 rounded-2xl shadow-2xl overflow-hidden"
         style={{
           boxShadow: '0 0 40px rgba(139,92,246,0.3), inset 0 0 20px rgba(139,92,246,0.05)'
         }}
@@ -91,6 +91,7 @@ export default function NFTListingModal({ nft, isOpen, onClose, onList }: NFTLis
           </h2>
           <button
             onClick={onClose}
+            title="Close dialog"
             className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,12 +166,14 @@ export default function NFTListingModal({ nft, isOpen, onClose, onList }: NFTLis
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="0.00"
+                aria-label="NFT price"
                 className="w-full px-4 py-3 bg-black/50 border border-violet-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                 required
               />
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as 'ETH' | 'USDC')}
+                aria-label="Select currency"
                 className="absolute right-3 top-1/2 -translate-y-1/2 bg-violet-500/20 border border-violet-500/30 rounded px-3 py-1 text-white text-sm focus:outline-none"
               >
                 <option value="ETH">ETH</option>
@@ -209,6 +212,7 @@ export default function NFTListingModal({ nft, isOpen, onClose, onList }: NFTLis
             <select
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
+              aria-label="Select listing duration"
               className="w-full px-4 py-3 bg-black/50 border border-violet-500/30 rounded-lg text-white focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
             >
               <option value={1}>1 Day</option>

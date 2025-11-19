@@ -89,6 +89,7 @@ export function NFTSellModal({ nft, onClose }: NFTSellModalProps) {
           <h2 className="text-xl font-bold text-white">Sell NFT</h2>
           <button
             onClick={onClose}
+            title="Close dialog"
             className="text-slate-400 hover:text-white transition"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,6 +173,7 @@ export function NFTSellModal({ nft, onClose }: NFTSellModalProps) {
                 <select
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
+                  aria-label="Select listing duration"
                   className="w-full px-4 py-3 rounded-lg border border-slate-600 bg-slate-800 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 outline-none transition"
                 >
                   <option value="1">1 day</option>
