@@ -5,5 +5,8 @@
     "src/app/api/**": {
       "maxDuration": 60
     }
+  },
+  "turbopack": {
+    "root": "."
   }
 }
