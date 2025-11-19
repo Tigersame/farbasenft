@@ -18,7 +18,8 @@ This wallet integration provides a professional, user-friendly interface for con
 Main component that provides connect/disconnect functionality with Base name resolution.
 
 **Features:**
-- Connect/Disconnect button states
+
+- **Connect/Disconnect button states**
 - Modal with available wallet connectors
 - Automatic Base name resolution
 - ENS fallback support
@@ -26,6 +27,7 @@ Main component that provides connect/disconnect functionality with Base name res
 - Responsive design with glass morphism effects
 
 **Usage:**
+
 ```tsx
 import { WalletIntegration } from '@/components/WalletIntegration';
 
@@ -35,6 +37,7 @@ export function MyComponent() {
 ```
 
 **Connected State Display:**
+
 - Shows connected wallet address/name
 - Displays Base domain name if available
 - Shows avatar from Base name service
@@ -45,13 +48,15 @@ export function MyComponent() {
 Display wallet token balances and portfolio value.
 
 **Features:**
-- Fetches balances from `/api/wallet/balances` endpoint
+
+- **Fetches balances from `/api/wallet/balances` endpoint**
 - Shows total portfolio value in USD
 - Individual token balances with USD conversion
 - Loading skeleton animation
 - Responsive grid layout
 
 **Usage:**
+
 ```tsx
 import { WalletBalance } from '@/components/WalletBalance';
 
@@ -61,7 +66,8 @@ export function Dashboard() {
 ```
 
 **Displayed Information:**
-- Total portfolio USD value
+
+- **Total portfolio USD value**
 - Individual asset balances:
   - ETH
   - USDC

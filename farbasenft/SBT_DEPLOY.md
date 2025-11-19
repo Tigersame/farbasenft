@@ -15,7 +15,7 @@ The SBT Claim feature allows users to mint a Soulbound Token (non-transferable N
 1. **Base Network Setup**
    - MetaMask or other Web3 wallet
    - Some ETH on Base for gas fees (small amount, ~0.01 ETH)
-   - RPC URL: https://base-rpc.publicnode.com
+   - RPC URL: <https://base-rpc.publicnode.com>
 
 2. **Development Tools**
    - Node.js v18+
@@ -27,16 +27,19 @@ The SBT Claim feature allows users to mint a Soulbound Token (non-transferable N
 ### Option 1: Using Hardhat (Recommended)
 
 1. **Compile the contract**:
+
    ```bash
    npx hardhat compile
    ```
 
 2. **Deploy to Base Sepolia (testnet)**:
+
    ```bash
    npx hardhat run scripts/deploy-sbt.ts --network baseSepolia
    ```
 
 3. **Deploy to Base Mainnet** (when ready):
+
    ```bash
    npx hardhat run scripts/deploy-sbt.ts --network base
    ```
@@ -45,7 +48,7 @@ The SBT Claim feature allows users to mint a Soulbound Token (non-transferable N
 
 ### Option 2: Using Remix IDE
 
-1. Go to https://remix.ethereum.org
+1. Go to <https://remix.ethereum.org>
 2. Create new file: `FarcasterNFTSBT.sol`
 3. Copy contents from `contracts/SBT.sol`
 4. Compile (Solidity 0.8.20)
@@ -56,7 +59,7 @@ The SBT Claim feature allows users to mint a Soulbound Token (non-transferable N
 
 ### Option 3: Using OpenZeppelin Defender
 
-1. Connect wallet to https://defender.openzeppelin.com
+1. Connect wallet to <https://defender.openzeppelin.com>
 2. Upload SBT.sol contract
 3. Deploy with Base network
 4. Copy deployed address
@@ -66,11 +69,13 @@ The SBT Claim feature allows users to mint a Soulbound Token (non-transferable N
 After deployment, add the contract address to your environment:
 
 1. **Update `.env.local`**:
+
    ```env
    NEXT_PUBLIC_SBT_CONTRACT_ADDRESS=0x_your_deployed_contract_address_here
    ```
 
 2. **Reload the app**:
+
    ```bash
    npm run dev
    ```
@@ -82,13 +87,15 @@ After deployment, add the contract address to your environment:
 
 ## Verification (Optional but Recommended)
 
-### Using Hardhat:
+### Using Hardhat
+
 ```bash
 npx hardhat verify --network base 0xYourContractAddress
 ```
 
-### Using Etherscan UI:
-1. Go to Base Etherscan (https://basescan.org)
+### Using Etherscan UI
+
+1. Go to Base Etherscan (<https://basescan.org>)
 2. Find your contract address
 3. Click "Contract" tab
 4. Click "Verify and Publish"
@@ -98,10 +105,12 @@ npx hardhat verify --network base 0xYourContractAddress
 ## Contract Functions
 
 ### User Functions
+
 - `claim()` - Claim one SBT (1000 XP reward)
 - `hasClaimed(address)` - Check if address has claimed
 
 ### Admin Functions
+
 - `setBaseURI(string)` - Update metadata base URI (owner only)
 - `pause()` / `unpause()` - Pause/resume claiming (owner only)
 
@@ -115,6 +124,7 @@ npx hardhat run scripts/set-sbt-metadata.ts --network base
 ```
 
 Or manually call the contract:
+
 ```solidity
 setBaseURI("ipfs://QmYourMetadataHash")
 ```
@@ -122,23 +132,28 @@ setBaseURI("ipfs://QmYourMetadataHash")
 ## Troubleshooting
 
 ### "Contract address not configured"
+
 - ✅ Deploy contract (see steps above)
 - ✅ Add address to .env.local
 - ✅ Restart dev server
 
 ### "User already claimed"
+
 - The wallet has already claimed an SBT
 - Each wallet can only claim once
 
 ### "Claim limit reached"
+
 - The 20,000 limit has been reached
 - No more SBTs can be claimed
 
 ### Gas estimation error
+
 - Ensure you have ETH for gas fees
 - Minimum ~0.01 ETH on Base
 
 ### Transaction fails
+
 - Check network (must be Base Mainnet or Sepolia)
 - Verify contract address is correct
 - Ensure wallet has sufficient balance
@@ -172,9 +187,10 @@ After deploying:
 ## Support
 
 For issues:
-- Check Hardhat documentation: https://hardhat.org/docs
-- Base network docs: https://docs.base.org
-- OpenZeppelin contracts: https://docs.openzeppelin.com/contracts/
+
+- Check Hardhat documentation: <https://hardhat.org/docs>
+- Base network docs: <https://docs.base.org>
+- OpenZeppelin contracts: <https://docs.openzeppelin.com/contracts/>
 
 ## Next Steps
 
