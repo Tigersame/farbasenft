@@ -1,6 +1,7 @@
 {
   "name": "farbase",
   "version": "0.1.0",
+  "description": "NFT Marketplace on Base with Farcaster Integration",
   "private": true,
   "scripts": {
     "dev": "next dev",
