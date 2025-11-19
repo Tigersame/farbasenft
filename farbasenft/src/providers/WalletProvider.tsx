@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import {
   base,
@@ -10,7 +10,7 @@ import {
 } from 'wagmi/chains';
 import { injected, coinbaseWallet, walletConnect } from 'wagmi/connectors';
 
-// Create wagmi config
+// Create wagmi config with proper error handling
 export const config = createConfig({
   chains: [base, baseSepolia, mainnet, sepolia],
   connectors: [
@@ -32,9 +32,32 @@ interface WalletProviderProps {
   children: React.ReactNode;
 }
 
+// Component to suppress wallet extension conflict warnings
+function WalletInitializer() {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const originalWarn = console.warn;
+      console.warn = (...args: any[]) => {
+        const message = args[0]?.toString() || '';
+        // Suppress wallet extension conflict warnings
+        if (
+          message.includes('ethereum') ||
+          message.includes('wallet') ||
+          message.includes('Ethereum provider')
+        ) {
+          return;
+        }
+        originalWarn(...args);
+      };
+    }
+  }, []);
+  return null;
+}
+
 export function WalletProvider({ children }: WalletProviderProps) {
   return (
     <WagmiProvider config={config}>
+      <WalletInitializer />
       {children}
     </WagmiProvider>
   );
