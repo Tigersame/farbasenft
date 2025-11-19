@@ -1,0 +1,11 @@
+node_modules
+.next
+.env.local
+.env.*.local
+dist
+build
+.git
+.gitignore
+README.md
+yarn.lock
+package-lock.json
