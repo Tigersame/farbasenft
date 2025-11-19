@@ -12,7 +12,8 @@ const SBT_ABI = parseAbi([
   "function totalClaimed() view returns (uint256)",
 ]);
 
-const sbtContractAddress = process.env.NEXT_PUBLIC_SBT_CONTRACT_ADDRESS as `0x${string}` | undefined;
+// Use environment variable or fallback to deployed address
+const sbtContractAddress = (process.env.NEXT_PUBLIC_SBT_CONTRACT_ADDRESS || "0x4653cf1E6272D9f87C42ae6F441D7Fc546705C9f") as `0x${string}`;
 
 export function SBTClaim() {
   const { address } = useAccount();
@@ -91,8 +92,9 @@ export function SBTClaim() {
       return;
     }
 
-    if (!sbtContractAddress || sbtContractAddress === "0x_your_contract_address") {
-      alert("⚠️ SBT contract address is not configured.\n\nTo enable SBT claiming:\n1. Deploy the SBT.sol contract to Base network\n2. Set NEXT_PUBLIC_SBT_CONTRACT_ADDRESS in .env.local\n3. Reload the app\n\nFor now, the XP reward system is functional without contract integration.");
+    // Contract address should always be set now (has fallback)
+    if (!sbtContractAddress || !sbtContractAddress.startsWith("0x")) {
+      alert("⚠️ SBT contract address is invalid. Please check your configuration.");
       return;
     }
 
@@ -159,7 +161,7 @@ export function SBTClaim() {
         </div>
       )}
 
-      {!sbtContractAddress || sbtContractAddress === "0x_your_contract_address" ? (
+      {!sbtContractAddress || !sbtContractAddress.startsWith("0x") ? (
         <div className="space-y-3">
           <button
             onClick={handleClaim}
