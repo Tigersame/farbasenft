@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Connected } from "@coinbase/onchainkit";
 import { Identity, Avatar, Name } from "@coinbase/onchainkit/identity";
+import { Transaction, TransactionButton, TransactionStatus, TransactionStatusLabel, TransactionStatusAction } from "@coinbase/onchainkit/transaction";
+import type { LifecycleStatus } from "@coinbase/onchainkit/transaction";
 import { parseAbi, parseEther, type Abi } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
 
@@ -306,14 +308,46 @@ export function NFTActions() {
               />
             </label>
           </div>
-          <button
-            type="button"
-            onClick={handleList}
-            disabled={listingLoading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:bg-slate-400/40 disabled:text-slate-600"
-          >
-            {listingLoading ? "Submitting listing..." : "List NFT"}
-          </button>
+          
+          {/* OnchainKit Transaction for Mini App compatibility */}
+          {marketplaceAddress && tokenId && priceEth ? (
+            <Transaction
+              chainId={base.id}
+              calls={[{
+                to: marketplaceAddress,
+                data: sellAbi,
+                value: BigInt(0),
+              }]}
+              onStatus={(status: LifecycleStatus) => {
+                console.log('Transaction status:', status);
+                if (status.statusName === 'success') {
+                  setSellState("Listing submitted successfully!");
+                  // Award XP
+                  addXP("NFT_LIST", { tokenId, price: priceEth }).catch(console.error);
+                } else if (status.statusName === 'error') {
+                  setSellState(`Error: ${status.statusData?.error || 'Transaction failed'}`);
+                }
+              }}
+            >
+              <TransactionButton
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:bg-slate-400/40 disabled:text-slate-600"
+                text="List NFT"
+              />
+              <TransactionStatus>
+                <TransactionStatusLabel />
+                <TransactionStatusAction />
+              </TransactionStatus>
+            </Transaction>
+          ) : (
+            <button
+              type="button"
+              onClick={handleList}
+              disabled={listingLoading || !tokenId || !priceEth}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:bg-slate-400/40 disabled:text-slate-600"
+            >
+              {listingLoading ? "Submitting listing..." : "List NFT"}
+            </button>
+          )}
           {sellState ? <p className="text-sm text-slate-300">{sellState}</p> : null}
         </div>
       </Connected>
