@@ -7,7 +7,7 @@ import { Connected } from "@coinbase/onchainkit";
 import { Identity, Avatar, Name } from "@coinbase/onchainkit/identity";
 import { Transaction, TransactionButton, TransactionStatus, TransactionStatusLabel, TransactionStatusAction } from "@coinbase/onchainkit/transaction";
 import type { LifecycleStatus } from "@coinbase/onchainkit/transaction";
-import { parseAbi, parseEther, type Abi } from "viem";
+import { parseAbi, parseEther, encodeFunctionData, type Abi } from "viem";
 import { base } from "viem/chains";
 import { useAccount, useWriteContract } from "wagmi";
 
@@ -316,7 +316,11 @@ export function NFTActions() {
               chainId={base.id}
               calls={[{
                 to: marketplaceAddress,
-                data: sellAbi,
+                data: encodeFunctionData({
+                  abi: sellAbi,
+                  functionName: sellFunctionName,
+                  args: [BigInt(tokenId), parseEther(priceEth)],
+                }),
                 value: BigInt(0),
               }]}
               onStatus={(status: LifecycleStatus) => {
