@@ -35,6 +35,7 @@ body {
 
 /* Remove blur from wallet modal backdrop */
 [data-onchainkit-wallet] [data-radix-portal] > div {
+  -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
 
@@ -379,6 +380,7 @@ div:has([data-onchainkit-swap]) > div,
 #swap-portal [class*="overlay"],
 #swap-portal [class*="Overlay"] {
   background: rgba(15, 23, 42, 0.95) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   backdrop-filter: blur(8px) !important;
 }
 
@@ -392,6 +394,7 @@ div:has([data-onchainkit-swap]) > div,
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   color: #f1f5f9 !important;
 }
+
 
 /* Progress bars and loading indicators */
 #swap-portal [role="progressbar"],
@@ -412,3 +415,126 @@ div:has([data-onchainkit-swap]) > div,
   color: #f1f5f9 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
+
+/* Mobile-specific OnchainKit Swap adjustments for Mini App */
+@media (max-width: 640px) {
+  /* Ensure swap component scales properly on mobile */
+  [data-onchainkit-swap] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Make swap component more compact on mobile */
+  [data-onchainkit-swap] > div {
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Reduce font sizes for mobile */
+  [data-onchainkit-swap] input {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Make buttons more touch-friendly on mobile (44px minimum) */
+  [data-onchainkit-swap] button {
+    min-height: 44px !important;
+    font-size: 14px !important;
+    padding: 12px 16px !important;
+  }
+
+  /* Adjust spacing for mobile */
+  [data-onchainkit-swap] [class*="token-row"],
+  [data-onchainkit-swap] [class*="swap-row"] {
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+
+  /* Make dropdowns/selects more mobile-friendly */
+  [data-onchainkit-swap] select,
+  [data-onchainkit-swap] [role="combobox"] {
+    font-size: 14px !important;
+    min-height: 44px !important;
+  }
+
+  /* Reduce margin/padding in swap portal section on mobile */
+  #swap-portal {
+    padding: 12px !important;
+  }
+
+  /* Ensure text is readable on small screens */
+  [data-onchainkit-swap] p,
+  [data-onchainkit-swap] span:not([class*="icon"]) {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Make token images/icons appropriate size for mobile */
+  [data-onchainkit-swap] img {
+    max-width: 24px !important;
+    max-height: 24px !important;
+  }
+}
+
+/* Extra small screens (e.g., iPhone SE) */
+@media (max-width: 375px) {
+  [data-onchainkit-swap] > div {
+    padding: 10px !important;
+  }
+
+  [data-onchainkit-swap] input {
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+  }
+
+  [data-onchainkit-swap] button {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+  }
+}
+
+/* Modal/Dialog mobile optimizations for Mini App */
+@media (max-width: 640px) {
+  /* Ensure modals fit within viewport */
+  [role="dialog"],
+  .modal,
+  [class*="modal"],
+  [class*="Modal"] {
+    max-width: calc(100vw - 24px) !important;
+    max-height: 95vh !important;
+    margin: 12px !important;
+  }
+
+  /* Make modal content scrollable */
+  [role="dialog"] > div,
+  .modal > div {
+    overflow-y: auto !important;
+  }
+
+  /* Ensure touch-friendly button sizes in modals */
+  [role="dialog"] button,
+  .modal button {
+    min-height: 44px !important;
+    font-size: 14px !important;
+  }
+
+  /* Compact modal headers on mobile */
+  [role="dialog"] header,
+  .modal header,
+  [role="dialog"] [class*="header"],
+  .modal [class*="header"] {
+    padding: 12px 16px !important;
+  }
+
+  /* Adjust modal input fields for mobile */
+  [role="dialog"] input,
+  [role="dialog"] select,
+  [role="dialog"] textarea,
+  .modal input,
+  .modal select,
+  .modal textarea {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+    padding: 10px 12px !important;
+  }
+}
+

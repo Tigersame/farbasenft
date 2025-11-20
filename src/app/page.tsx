@@ -441,31 +441,31 @@ export default function Page() {
             {showSwap && (
               <section
                 id="swap-portal"
-                className="space-y-6 rounded-3xl border border-cyan-500/20 bg-linear-to-br from-slate-900/80 to-slate-900/60 p-6 shadow-xl shadow-cyan-500/5"
+                className="space-y-4 sm:space-y-6 rounded-2xl sm:rounded-3xl border border-cyan-500/20 bg-linear-to-br from-slate-900/80 to-slate-900/60 p-3 sm:p-6 shadow-xl shadow-cyan-500/5"
               >
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs uppercase tracking-[0.35em] text-cyan-400">Swap Portal</span>
-                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-300">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.35em] text-cyan-400">Swap Portal</span>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-emerald-300">
                       <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                       Live
                     </span>
                   </div>
-                  <h2 className="text-3xl font-semibold text-white">Rebalance on Base L2</h2>
-                  <p className="text-base text-slate-300 max-w-2xl">
-                    Powered by OnchainKit aggregator. Swap between ETH, stablecoins, and community tokens with the best rates—all without leaving your NFT journey.
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-white leading-tight">Rebalance on Base L2</h2>
+                  <p className="text-xs sm:text-sm lg:text-base text-slate-300 max-w-2xl leading-relaxed">
+                    Powered by OnchainKit aggregator. Swap between ETH, stablecoins, and community tokens with the best rates.
                   </p>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-                  <div className="rounded-2xl border border-cyan-500/20 bg-slate-900/80 p-6 shadow-lg">
-                    <div className="mb-4 flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-slate-200">Exchange Tokens</h3>
-                      <div className="flex items-center gap-2">
-                        <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
+                <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.2fr_1fr]">
+                  <div className="rounded-xl sm:rounded-2xl border border-cyan-500/20 bg-slate-900/80 p-3 sm:p-6 shadow-lg">
+                    <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <h3 className="text-xs sm:text-sm font-semibold text-slate-200">Exchange Tokens</h3>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-cyan-300">
                           Base L2
                         </span>
-                        <span className="text-xs text-slate-400">Best Rates</span>
+                        <span className="text-[10px] sm:text-xs text-slate-400">Best Rates</span>
                       </div>
                     </div>
                     <SwapWrapper
@@ -475,56 +475,56 @@ export default function Page() {
                       title=""
                       onSwapComplete={handleSwapComplete}
                     />
-                    <div className="mt-4 flex items-center gap-2 rounded-lg border border-white/5 bg-slate-950/50 p-3">
-                      <svg className="h-4 w-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="mt-3 sm:mt-4 flex items-start gap-2 rounded-lg border border-white/5 bg-slate-950/50 p-2 sm:p-3">
+                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-cyan-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed">
                         Rates are aggregated from multiple DEXs on Base. You always get the best available price.
                       </p>
                     </div>
                   </div>
 
-                  <div className="space-y-5">
+                  <div className="space-y-3 sm:space-y-5">
                     {/* Pending NFT Purchase Info */}
                     {pendingNFT && (
-                      <div className="rounded-2xl border border-emerald-500/30 bg-linear-to-br from-emerald-900/20 to-slate-900/60 p-5">
-                        <div className="mb-3 flex items-center gap-2">
-                          <svg className="h-5 w-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                      <div className="rounded-xl sm:rounded-2xl border border-emerald-500/30 bg-linear-to-br from-emerald-900/20 to-slate-900/60 p-3 sm:p-5">
+                        <div className="mb-2 sm:mb-3 flex items-center gap-2">
+                          <svg className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <h4 className="text-sm font-semibold text-white">Pending Purchase</h4>
+                          <h4 className="text-xs sm:text-sm font-semibold text-white">Pending Purchase</h4>
                         </div>
-                        <div className="mb-3 space-y-2">
-                          <p className="text-xs text-slate-300">{pendingNFT.name}</p>
-                          <p className="text-sm font-bold text-emerald-300">Price: {pendingNFT.price} ETH</p>
+                        <div className="mb-2 sm:mb-3 space-y-1 sm:space-y-2">
+                          <p className="text-[10px] sm:text-xs text-slate-300">{pendingNFT.name}</p>
+                          <p className="text-xs sm:text-sm font-bold text-emerald-300">Price: {pendingNFT.price} ETH</p>
                         </div>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed">
                           Swap ETH or USDC to ensure you have enough balance, then return to the gallery to complete your purchase.
                         </p>
                       </div>
                     )}
 
-                    <div className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
-                      <h3 className="mb-4 text-lg font-semibold text-white">Why Swap on Base?</h3>
-                      <ul className="space-y-3 text-sm text-slate-200">
+                    <div className="rounded-xl sm:rounded-2xl border border-white/5 bg-slate-900/60 p-3 sm:p-5">
+                      <h3 className="mb-3 sm:mb-4 text-sm sm:text-base lg:text-lg font-semibold text-white">Why Swap on Base?</h3>
+                      <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-slate-200">
                         {swapHighlights.map((item, index) => (
-                          <li key={item} className="flex items-start gap-3">
-                            <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-cyan-400 shrink-0" />
-                            <span className="flex-1">{item}</span>
+                          <li key={item} className="flex items-start gap-2 sm:gap-3">
+                            <span className="mt-0.5 sm:mt-1 inline-flex h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-cyan-400 shrink-0" />
+                            <span className="flex-1 leading-relaxed">{item}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
 
-                    <div className="rounded-2xl border border-purple-500/20 bg-linear-to-br from-purple-900/20 to-slate-900/60 p-5">
-                      <div className="mb-3 flex items-center gap-2">
-                        <svg className="h-5 w-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="rounded-xl sm:rounded-2xl border border-purple-500/20 bg-linear-to-br from-purple-900/20 to-slate-900/60 p-3 sm:p-5">
+                      <div className="mb-2 sm:mb-3 flex items-center gap-2">
+                        <svg className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                        <h4 className="text-sm font-semibold text-white">Earn XP Rewards</h4>
+                        <h4 className="text-xs sm:text-sm font-semibold text-white">Earn XP Rewards</h4>
                       </div>
-                      <p className="text-xs text-slate-300">
+                      <p className="text-[10px] sm:text-xs text-slate-300 leading-relaxed">
                         Complete on-chain swaps to earn XP and unlock exclusive perks. Only verified blockchain transactions count!
                       </p>
                     </div>

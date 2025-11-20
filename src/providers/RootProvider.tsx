@@ -48,16 +48,22 @@ const getWagmiConfig = () => {
 };
 
 export function RootProvider({ children }: { children: ReactNode }) {
-  const queryClient = useMemo(() => new QueryClient(), []);
+  const queryClient = useMemo(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }), []);
   const config = useMemo(() => getWagmiConfig(), []);
   const [currentChain, setCurrentChain] = useState(base);
 
   // Validate API key on mount
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY;
-    if (!apiKey) {
-      console.warn('⚠️ NEXT_PUBLIC_ONCHAINKIT_API_KEY is not set. Some features may not work.');
-      console.warn('Get a free key at: https://portal.cdp.coinbase.com/');
+    if (!apiKey || apiKey === 'demo-key') {
+      console.warn('⚠️ Using demo OnchainKit key. Get yours at: https://portal.cdp.coinbase.com/');
     }
   }, []);
 
@@ -68,7 +74,7 @@ export function RootProvider({ children }: { children: ReactNode }) {
         <OnchainKitProvider
           apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || 'demo-key'}
           chain={currentChain}
-          miniKit={{ enabled: true, autoConnect: true }}
+          miniKit={{ enabled: true, autoConnect: false }}
           config={{
             appearance: {
               name: "farbase",
@@ -77,8 +83,6 @@ export function RootProvider({ children }: { children: ReactNode }) {
             },
             wallet: {
               display: "modal",
-              termsUrl: process.env.NEXT_PUBLIC_TERMS_URL,
-              privacyUrl: process.env.NEXT_PUBLIC_PRIVACY_URL,
               supportedWallets: {
                 rabby: true,
                 trust: true,

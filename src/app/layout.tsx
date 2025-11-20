@@ -9,6 +9,8 @@ import { MiniAppSDK } from "@/components/MiniAppSDK";
 import { FarcasterDebug } from "@/components/FarcasterDebug";
 import { ProviderErrorBoundary } from "@/components/ProviderErrorBoundary";
 import { minikitConfig } from "@/lib/minikit.config";
+import { Suspense } from "react";
+import { LoadingFallback } from "@/components/LoadingFallback";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,11 +86,13 @@ export default function RootLayout({
         <ProviderErrorBoundary>
           <ConsoleErrorFilter />
           <MiniAppSDK />
-          <RootProvider>
-            <WalletIslandLauncher />
-            {children}
-            <FarcasterDebug />
-          </RootProvider>
+          <Suspense fallback={<LoadingFallback />}>
+            <RootProvider>
+              <WalletIslandLauncher />
+              {children}
+              <FarcasterDebug />
+            </RootProvider>
+          </Suspense>
         </ProviderErrorBoundary>
       </body>
     </html>
