@@ -23,6 +23,7 @@ import { useAccount, useConnect, useBalance } from 'wagmi';
 import { WalletControls } from '@/components/WalletControls';
 import NFTListingModal, { ListingData } from '@/components/NFTListingModal';
 import { deDuplicatedFetch } from '@/lib/deDupeFetch';
+import { useXP } from '@/hooks/useXP';
 
 const METADATA_PROXY = process.env.NEXT_PUBLIC_METADATA_PROXY || 'https://cloudflare-ipfs.com/ipfs';
 const IMAGE_CDN = process.env.NEXT_PUBLIC_IMAGE_CDN || 'https://ipfs.io/ipfs/';
@@ -62,6 +63,7 @@ export default function FarbaseMintNFTGallery({ initialTab = 'live' }: { initial
   const { address, isConnected } = useAccount();
   const { connectors } = useConnect();
   const { data: balanceData } = useBalance({ address });
+  const { addXP } = useXP();
 
   const { data, error, isLoading, mutate } = useSWR<GalleryData>(`/api/nfts?tab=${tab}`, fetcher, { 
     revalidateOnFocus: false,
@@ -124,6 +126,8 @@ export default function FarbaseMintNFTGallery({ initialTab = 'live' }: { initial
     } else {
       // Wallet is connected, proceed with mint flow
       console.log(`Minting NFT ${tokenId} with wallet ${address}`);
+      // Award XP for minting/creating NFT
+      addXP("NFT_CREATE", { tokenId }).catch(console.error);
       // TODO: Implement actual mint transaction logic here
     }
   }
@@ -170,6 +174,8 @@ export default function FarbaseMintNFTGallery({ initialTab = 'live' }: { initial
     
     // Sufficient funds, proceed to payment
     console.log(`User has sufficient funds. Proceeding to purchase ${token.name}`);
+    // Award XP for NFT purchase
+    addXP("NFT_BUY", { tokenId: token.tokenId, price: token.price }).catch(console.error);
     // TODO: Implement actual payment/purchase transaction
     window.location.hash = "#swap-portal";
   }
