@@ -69,12 +69,18 @@ export function useQuickAuth(): UseQuickAuthReturn {
       // Check availability first
       const available = await isQuickAuthAvailable();
       if (!available) {
-        throw new Error("Quick Auth is not available in this context. Please use Farcaster client or Warpcast.");
+        const error = new Error("Farcaster connection is only available in Warpcast or Farcaster app. Please open this app in Warpcast to connect.");
+        setError(error);
+        setIsLoading(false);
+        return;
       }
 
       // Check if quickAuth methods exist
       if (!sdk.quickAuth || typeof sdk.quickAuth.getToken !== "function") {
-        throw new Error("Quick Auth is not supported in this environment.");
+        const error = new Error("Quick Auth is not supported in this environment.");
+        setError(error);
+        setIsLoading(false);
+        return;
       }
 
       // Get token from Farcaster SDK

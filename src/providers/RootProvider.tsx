@@ -12,7 +12,7 @@ import {
 } from "wagmi";
 import { base, baseSepolia } from "viem/chains";
 import { coinbaseWallet } from "wagmi/connectors";
-import { farcasterMiniApp } from "@farcaster/miniapp-sdk/wagmi";
+import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 
 // Lazy config creation to avoid SSR issues

@@ -30,8 +30,11 @@ export async function GET() {
       ogDescription?: string;
       ogImageUrl?: string;
       noindex?: boolean;
+      castShareUrl?: string;
+      canonicalDomain?: string;
     };
   } = {
+    // Account association is optional for testing
     ...(process.env.FARCASTER_PAYLOAD && process.env.FARCASTER_SIGNATURE
       ? {
           accountAssociation: {

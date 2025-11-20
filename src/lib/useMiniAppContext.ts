@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { sdk } from "@farcaster/miniapp-sdk";
+import { onMiniAppEvent } from "./miniAppEvents";
 
 /**
  * Hook to get Farcaster Mini App context
  * Provides user information and app context when available
  * 
- * Reference: https://miniapps.farcaster.xyz/docs/context
+ * Reference: 
+ * - https://miniapps.farcaster.xyz/docs/context
+ * - https://miniapps.farcaster.xyz/docs/sdk/is-in-mini-app
  */
 export function useMiniAppContext() {
   const [context, setContext] = useState<Awaited<typeof sdk.context> | null>(null);
@@ -21,7 +24,10 @@ export function useMiniAppContext() {
     const fetchContext = async () => {
       try {
         setIsLoading(true);
-        const inMiniApp = await sdk.isInMiniApp();
+        
+        // Use SDK's isInMiniApp method
+        // Reference: https://miniapps.farcaster.xyz/docs/sdk/is-in-mini-app
+        const inMiniApp = await sdk.isInMiniApp().catch(() => false);
         
         if (mounted) {
           setIsInMiniApp(inMiniApp);
@@ -48,29 +54,28 @@ export function useMiniAppContext() {
 
     fetchContext();
 
-    // Listen for context updates
-    const handleContextUpdate = (event: CustomEvent) => {
+    // Listen for context updates using event system
+    const subscription = onMiniAppEvent("miniapp:context:update", ({ context: updatedContext }) => {
       if (mounted) {
-        setContext(event.detail);
+        setContext(updatedContext);
       }
-    };
-
-    // Note: SDK may not have a context update event, but we can check periodically
-    // or when the component mounts again
-    window.addEventListener("farcaster:context:update", handleContextUpdate as EventListener);
+    });
 
     return () => {
       mounted = false;
-      window.removeEventListener("farcaster:context:update", handleContextUpdate as EventListener);
+      subscription.unsubscribe();
     };
   }, []);
 
   return {
+    sdk,
     context,
     isInMiniApp,
     isLoading,
     error,
     user: context?.user || null,
+    client: context?.client || null,
+    location: context?.location || null,
   };
 }
 

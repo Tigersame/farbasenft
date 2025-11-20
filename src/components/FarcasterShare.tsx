@@ -139,13 +139,15 @@ export function FarcasterShare({ nftTitle, nftImage, nftUrl, customText }: Farca
           
           {/* Show error message if Quick Auth failed */}
           {quickAuthError && (
-            <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-xs text-red-200">
-              {quickAuthError.message}
-              {!isQuickAuthAvailable && (
-                <p className="mt-1 text-xs text-red-300/80">
-                  Make sure you're in Warpcast or Farcaster app to use this feature.
-                </p>
-              )}
+            <div className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
+              <p className="font-semibold mb-1">⚠️ Browser Mode</p>
+              <p className="text-amber-300/80">
+                Farcaster features only work inside Warpcast or the Farcaster mobile app. 
+                Open this URL in Warpcast to connect:
+              </p>
+              <code className="block mt-2 p-2 bg-slate-900/50 rounded text-cyan-400 text-xs break-all">
+                https://warpcast.com/~/miniapp?url=https://y-six-dun.vercel.app
+              </code>
             </div>
           )}
           

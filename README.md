@@ -84,18 +84,50 @@ farbasenft/
 
 ## Documentation
 
+### Setup Guides
 - [Farcaster Auth Setup](./FARCASTER_AUTH_SETUP.md)
 - [Wallet Setup](./WALLET_SETUP.md)
 - [Pinata Setup](./PINATA_SETUP.md)
 - [XP System](./XP_SYSTEM.md)
-- [Base Guidelines Compliance](./BASE_GUIDELINES_COMPLIANCE.md)
-- [Manifest Setup](./MANIFEST_SETUP.md)
-- [Notifications Setup](./NOTIFICATIONS_SETUP.md)
-- [Neynar Webhook Setup](./NEYNAR_WEBHOOK_SETUP.md)
+
+### Implementation Guides
+- [Authentication Implementation](./AUTH_IMPLEMENTATION.md) - Quick Auth integration
+- [Authentication Quick Reference](./AUTH_QUICK_REF.md) - Quick auth guide
+- [Wallet Interaction Guide](./WALLET_INTERACTION_GUIDE.md) - Complete wallet integration
+- [Discovery Implementation](./DISCOVERY_IMPLEMENTATION.md) - SEO & Farcaster discovery
+- [Discovery Checklist](./DISCOVERY_CHECKLIST.md) - Deployment steps
+- [Domain Migration](./DOMAIN_MIGRATION.md) - Change domains smoothly
+- [Notifications Implementation](./NOTIFICATIONS_IMPLEMENTATION.md) - Push notification system
+- [Notifications Quick Reference](./NOTIFICATIONS_QUICK_REF.md) - Quick notification guide
+- [Universal Links Implementation](./UNIVERSAL_LINKS_IMPLEMENTATION.md) - Deep linking guide
+- [Universal Links Quick Reference](./UNIVERSAL_LINKS_QUICK_REF.md) - Quick links guide
+- [Share Extension Implementation](./SHARE_EXTENSION_IMPLEMENTATION.md) - Cast sharing guide
+- [Share Extension Quick Reference](./SHARE_EXTENSION_QUICK_REF.md) - Quick share guide
+- [SDK Advanced Features](./SDK_ADVANCED_FEATURES.md) - Capabilities, events, compatibility
+- [SDK Quick Reference](./SDK_QUICK_REF.md) - Quick SDK feature guide
+
+### Farcaster Integration
+- [Sharing Feature](./FARCASTER_SHARING_FEATURE_SUMMARY.md)
+- [Mini App Guidelines](./BASE_GUIDELINES_COMPLIANCE.md)
+- [Testing in Farcaster](./TESTING_IN_FARCASTER.md)
 
 ## Smart Contracts
 
 The SBT (Soulbound Token) contract is located in `contracts/SBT.sol`. Deploy it to Base to enable SBT claiming.
+
+## Demo Pages
+
+- **`/wallet-demo`** - Complete wallet interaction demonstration
+  - Wallet connection flow
+  - Transaction sending example
+  - Implementation reference
+
+- **`/sdk-demo`** - SDK capabilities and features demo
+  - Capability detection testing
+  - isInMiniApp context display
+  - Live event monitoring
+  - Compatibility report
+  - Implementation reference
 
 ## Deployment
 

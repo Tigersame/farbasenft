@@ -83,18 +83,154 @@ export interface SendNotificationResponse {
   rateLimitedTokens: string[];
 }
 
+/**
+ * Get all stored notification tokens
+ * Useful for sending broadcast notifications
+ */
+export async function getAllNotificationTokens(): Promise<
+  Array<{ fid: number; appFid: number; details: NotificationDetails }>
+> {
+  const tokens: Array<{ fid: number; appFid: number; details: NotificationDetails }> = [];
+  
+  for (const [key, details] of notificationStore.entries()) {
+    const [fidStr, appFidStr] = key.split(':');
+    tokens.push({
+      fid: parseInt(fidStr),
+      appFid: parseInt(appFidStr),
+      details,
+    });
+  }
+  
+  return tokens;
+}
+
+/**
+ * Send notifications to multiple users in batches
+ * Automatically handles batching of up to 100 tokens per request
+ * 
+ * @param notificationId Stable identifier for deduplication (e.g., "daily-reminder-2025-11-20")
+ * @param title Notification title (max 32 chars)
+ * @param body Notification body (max 128 chars)
+ * @param targetUrl URL to open when clicked (max 1024 chars)
+ * @param tokens Array of notification tokens
+ */
+export async function sendBatchNotifications({
+  notificationId,
+  title,
+  body,
+  targetUrl,
+  tokens,
+}: {
+  notificationId: string;
+  title: string;
+  body: string;
+  targetUrl: string;
+  tokens: Array<{ token: string; url: string; fid: number; appFid: number }>;
+}): Promise<{
+  successful: number;
+  failed: number;
+  rateLimited: number;
+  invalidated: number;
+}> {
+  // Validate lengths
+  if (notificationId.length > 128) {
+    throw new Error("notificationId must be <= 128 characters");
+  }
+  if (title.length > 32) {
+    console.warn(`[Notifications] Title truncated from ${title.length} to 32 chars`);
+    title = title.substring(0, 32);
+  }
+  if (body.length > 128) {
+    console.warn(`[Notifications] Body truncated from ${body.length} to 128 chars`);
+    body = body.substring(0, 128);
+  }
+  if (targetUrl.length > 1024) {
+    throw new Error("targetUrl must be <= 1024 characters");
+  }
+
+  // Group tokens by URL (different Farcaster clients may have different URLs)
+  const tokensByUrl = new Map<string, typeof tokens>();
+  for (const token of tokens) {
+    const existing = tokensByUrl.get(token.url) || [];
+    existing.push(token);
+    tokensByUrl.set(token.url, existing);
+  }
+
+  let successful = 0;
+  let failed = 0;
+  let rateLimited = 0;
+  let invalidated = 0;
+
+  // Send to each URL in batches of 100
+  for (const [url, urlTokens] of tokensByUrl.entries()) {
+    // Batch into groups of 100
+    for (let i = 0; i < urlTokens.length; i += 100) {
+      const batch = urlTokens.slice(i, i + 100);
+      const tokenStrings = batch.map(t => t.token);
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            notificationId,
+            title,
+            body,
+            targetUrl,
+            tokens: tokenStrings,
+          } satisfies SendNotificationRequest),
+        });
+
+        if (response.status === 200) {
+          const responseData = (await response.json()) as SendNotificationResponse;
+
+          successful += responseData.successfulTokens?.length || 0;
+          rateLimited += responseData.rateLimitedTokens?.length || 0;
+          
+          // Remove invalidated tokens from storage
+          if (responseData.invalidTokens?.length > 0) {
+            invalidated += responseData.invalidTokens.length;
+            for (const token of batch) {
+              if (responseData.invalidTokens.includes(token.token)) {
+                await deleteUserNotificationDetails(token.fid, token.appFid);
+              }
+            }
+          }
+        } else {
+          failed += tokenStrings.length;
+          console.error(`[Notifications] Batch request failed: ${response.status}`);
+        }
+      } catch (error) {
+        failed += tokenStrings.length;
+        console.error(`[Notifications] Batch send error:`, error);
+      }
+    }
+  }
+
+  console.log(
+    `[Notifications] Batch complete: ${successful} sent, ${failed} failed, ` +
+    `${rateLimited} rate limited, ${invalidated} invalidated`
+  );
+
+  return { successful, failed, rateLimited, invalidated };
+}
+
 export async function sendMiniAppNotification({
   fid,
   appFid,
   title,
   body,
   targetUrl,
+  notificationId,
 }: {
   fid: number;
   appFid: number;
   title: string;
   body: string;
   targetUrl?: string;
+  notificationId?: string; // Optional stable ID for deduplication
 }): Promise<SendNotificationResult> {
   const notificationDetails = await getUserNotificationDetails(fid, appFid);
   
@@ -119,6 +255,9 @@ export async function sendMiniAppNotification({
     return { state: "error", error: "targetUrl exceeds 1024 characters" };
   }
 
+  // Generate or use provided notification ID
+  const finalNotificationId = notificationId || crypto.randomUUID();
+
   try {
     const response = await fetch(notificationDetails.url, {
       method: "POST",
@@ -126,7 +265,7 @@ export async function sendMiniAppNotification({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        notificationId: crypto.randomUUID(),
+        notificationId: finalNotificationId,
         title,
         body,
         targetUrl: appUrl,

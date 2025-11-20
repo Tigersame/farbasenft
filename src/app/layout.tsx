@@ -24,39 +24,102 @@ const geistMono = Geist_Mono({
 
 const miniapp = minikitConfig.miniapp;
 
+// SEO-optimized metadata for Farcaster discovery and search engines
 export const metadata: Metadata = {
-  title: "Farbase - NFT Marketplace on Base with Farcaster",
+  // Primary title - appears in browser tabs and search results
+  title: {
+    default: "farbasenft - NFT Marketplace on Base",
+    template: "%s | farbasenft",
+  },
+  
+  // Detailed description for search engines (150-160 chars optimal)
   description:
-    "An NFT marketplace on Base powered by Farcaster integration. Discover, mint, swap, and collect NFTs seamlessly.",
+    "Create, discover, and trade NFTs on Base blockchain. Earn XP rewards, unlock achievements, and build your digital art collection with Farcaster integration.",
+  
+  // Keywords for SEO
+  keywords: [
+    "NFT marketplace",
+    "Base blockchain",
+    "Farcaster",
+    "digital art",
+    "NFT trading",
+    "crypto collectibles",
+    "Web3",
+    "soulbound tokens",
+    "XP rewards",
+    "onchain",
+  ],
+  
+  // App metadata
+  applicationName: "farbasenft",
+  authors: [{ name: "farbasenft" }],
+  creator: "farbasenft",
+  publisher: "farbasenft",
+  
   icons: {
     icon: "/favicon.svg",
+    apple: "/icon.svg",
   },
+  
   metadataBase:
     process.env.NEXT_PUBLIC_APP_URL !== undefined
       ? new URL(process.env.NEXT_PUBLIC_APP_URL)
       : undefined,
+  
+  // Enhanced Open Graph for social sharing
   openGraph: {
-    title: "FarcastMints",
-    description:
-      "An NFT marketplace on Base with Farcaster integration. Mint, swap, and collect on-chain.",
+    type: "website",
+    locale: "en_US",
+    title: miniapp.ogTitle,
+    description: miniapp.ogDescription,
     url: process.env.NEXT_PUBLIC_APP_URL,
-    siteName: "FarcastMints",
+    siteName: "farbasenft",
     images: [
       {
         url: "/hero.svg",
         width: 1200,
         height: 630,
-        alt: "farbasenft hero artwork",
+        alt: "farbasenft - NFT Marketplace on Base blockchain",
+        type: "image/svg+xml",
       },
     ],
   },
+  
+  // Twitter card optimization
   twitter: {
     card: "summary_large_image",
-    title: "FarcastMints",
-    description:
-      "Discover and collect NFTs on Base. Farcaster-native marketplace with seamless wallet integration.",
+    title: miniapp.ogTitle,
+    description: miniapp.ogDescription,
     images: ["/hero.svg"],
+    creator: "@farbasenft",
   },
+  
+  // Mobile app capabilities
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+  },
+  
+  // Theme colors
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#030712" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
+  // Robots - allow indexing for discovery
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  
+  // Additional metadata
   other: {
     // Farcaster Mini App embed metadata (v1 format)
     "fc:miniapp": JSON.stringify({
