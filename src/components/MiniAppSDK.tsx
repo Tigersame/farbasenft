@@ -35,35 +35,17 @@ export function MiniAppSDK() {
 
         console.log("✅ Detected Farcaster Mini App context");
 
-        // Wait for critical content to be ready to avoid jitter
-        // Check for key elements that should be loaded before showing the app
-        const waitForCriticalContent = () => {
-          return new Promise<void>((resolve) => {
-            const checkContent = () => {
-              // Wait for document to be interactive or complete
-              if (document.readyState === "complete" || document.readyState === "interactive") {
-                // Give a brief moment for React to hydrate and render initial content
-                setTimeout(() => resolve(), 100);
-              } else {
-                window.addEventListener("DOMContentLoaded", () => {
-                  setTimeout(() => resolve(), 100);
-                }, { once: true });
-              }
-            };
-            checkContent();
-          });
-        };
-
-        await waitForCriticalContent();
-
-        // Call ready() to hide the splash screen - do this ASAP after content is ready
-        await sdk.actions.ready({ disableNativeGestures: false }).catch((e) => {
+        // Call ready() immediately - don't wait for content
+        // The splash screen timeout is more important than avoiding jitter
+        try {
+          await sdk.actions.ready({ disableNativeGestures: false });
+          console.log("✅ Mini App SDK ready() called successfully");
+        } catch (e) {
           console.warn("⚠️ Failed to call sdk.actions.ready():", e);
-        });
+        }
         
         if (mounted) {
           setIsReady(true);
-          console.log("✅ Mini App SDK ready() called - splash screen hidden");
         }
       } catch (err) {
         console.error("❌ Mini App SDK initialization error:", err);
