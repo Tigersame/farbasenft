@@ -16,6 +16,7 @@ import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 
 // Lazy config creation to avoid SSR issues
+// Force rebuild - Vercel cache clear
 let wagmiConfig: any = null;
 
 const getWagmiConfig = () => {
