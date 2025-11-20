@@ -58,14 +58,30 @@ export const metadata: Metadata = {
     images: ["/hero.svg"],
   },
   other: {
+    // Farcaster Mini App embed metadata (v1 format)
     "fc:miniapp": JSON.stringify({
-      version: "next",
+      version: "1",
       imageUrl: miniapp.heroImageUrl,
       button: {
-        title: `Open ${miniapp.name}`,
+        title: `🎨 Open ${miniapp.name}`,
+        action: {
+          type: "launch_miniapp",
+          name: miniapp.name,
+          url: miniapp.homeUrl,
+          splashImageUrl: miniapp.splashImageUrl,
+          splashBackgroundColor: miniapp.splashBackgroundColor,
+        },
+      },
+    }),
+    // Backward compatibility with older Farcaster clients
+    "fc:frame": JSON.stringify({
+      version: "1",
+      imageUrl: miniapp.heroImageUrl,
+      button: {
+        title: `🎨 Open ${miniapp.name}`,
         action: {
           type: "launch_frame",
-          name: `Launch ${miniapp.name}`,
+          name: miniapp.name,
           url: miniapp.homeUrl,
           splashImageUrl: miniapp.splashImageUrl,
           splashBackgroundColor: miniapp.splashBackgroundColor,
