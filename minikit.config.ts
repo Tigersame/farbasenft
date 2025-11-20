@@ -1,5 +1,5 @@
 const ROOT_URL =
-  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "http://localhost:3000";
+  (process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "").trim()) ?? "http://localhost:3000";
 
 // Domain migration support
 // Set NEXT_PUBLIC_CANONICAL_DOMAIN to migrate to a new domain
