@@ -328,7 +328,7 @@ export function NFTActions() {
                 if (status.statusName === 'success') {
                   setSellState("Listing submitted successfully!");
                   // Award XP
-                  addXP("NFT_LIST", { tokenId, price: priceEth }).catch(console.error);
+                  addXP("NFT_SELL", { tokenId, price: priceEth }).catch(console.error);
                 } else if (status.statusName === 'error') {
                   setSellState(`Error: ${status.statusData?.error || 'Transaction failed'}`);
                 }
