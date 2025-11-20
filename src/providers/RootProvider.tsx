@@ -12,6 +12,7 @@ import {
 } from "wagmi";
 import { base, baseSepolia } from "viem/chains";
 import { coinbaseWallet } from "wagmi/connectors";
+import { farcasterMiniApp } from "@farcaster/miniapp-sdk/wagmi";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 
 // Lazy config creation to avoid SSR issues
@@ -25,8 +26,9 @@ const getWagmiConfig = () => {
   const baseSepoliaRpcUrl =
     process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org";
 
-  // Build connectors - use only Coinbase wallet to avoid conflicts with MetaMask
+  // Build connectors - Farcaster Mini App first for auto-detection, then Coinbase wallet
   const connectors = [
+    farcasterMiniApp(),
     coinbaseWallet({
       appName: "farbase",
       version: "4",
@@ -74,7 +76,7 @@ export function RootProvider({ children }: { children: ReactNode }) {
         <OnchainKitProvider
           apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || 'demo-key'}
           chain={currentChain}
-          miniKit={{ enabled: true, autoConnect: false }}
+          miniKit={{ enabled: true, autoConnect: true }}
           config={{
             appearance: {
               name: "farbase",

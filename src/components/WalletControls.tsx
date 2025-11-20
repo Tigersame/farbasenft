@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useConnect, useAccount } from "wagmi";
 import {
   Wallet,
   ConnectWallet,
@@ -18,6 +20,33 @@ import {
 } from "@coinbase/onchainkit/identity";
 
 export function WalletControls() {
+  const { connect, connectors } = useConnect();
+  const { isConnected } = useAccount();
+
+  // Auto-connect Farcaster Mini App wallet on mount
+  useEffect(() => {
+    if (!isConnected && connectors.length > 0) {
+      // Check if we're in a Farcaster Mini App context
+      const isFarcasterMiniApp = typeof window !== 'undefined' && 
+        (window.location.href.includes('warpcast.com') || 
+         window.location.href.includes('farcaster.xyz') ||
+         document.referrer.includes('warpcast.com') ||
+         document.referrer.includes('farcaster.xyz'));
+      
+      if (isFarcasterMiniApp) {
+        // Find and connect the Farcaster Mini App connector
+        const farcasterConnector = connectors.find(
+          (connector) => connector.id === 'farcasterMiniApp' || connector.name.includes('Farcaster')
+        );
+        
+        if (farcasterConnector) {
+          console.log('Auto-connecting Farcaster Mini App wallet');
+          connect({ connector: farcasterConnector });
+        }
+      }
+    }
+  }, [isConnected, connectors, connect]);
+
   return (
     <Wallet>
       <ConnectWallet
