@@ -8,6 +8,7 @@ import { Identity, Avatar, Name } from "@coinbase/onchainkit/identity";
 import { Transaction, TransactionButton, TransactionStatus, TransactionStatusLabel, TransactionStatusAction } from "@coinbase/onchainkit/transaction";
 import type { LifecycleStatus } from "@coinbase/onchainkit/transaction";
 import { parseAbi, parseEther, type Abi } from "viem";
+import { base } from "viem/chains";
 import { useAccount, useWriteContract } from "wagmi";
 
 import { Info, Tip, Warning } from "@/components/Primitives";
