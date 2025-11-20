@@ -7,6 +7,7 @@ import type { Token } from "@coinbase/onchainkit/token";
 import { useXP } from "@/hooks/useXP";
 import { useAccount } from "wagmi";
 import { SwapWrapper } from "@/components/SwapWrapper";
+import { ModernSwap } from "@/components/ModernSwap";
 
 import { AppLayout } from "@/components/AppLayout";
 import { NFTActions } from "@/components/NFTActions";
@@ -458,31 +459,8 @@ export default function Page() {
                 </div>
 
                 <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.2fr_1fr]">
-                  <div className="rounded-xl sm:rounded-2xl border border-cyan-500/20 bg-slate-900/80 p-3 sm:p-6 shadow-lg">
-                    <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                      <h3 className="text-xs sm:text-sm font-semibold text-slate-200">Exchange Tokens</h3>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-cyan-300">
-                          Base L2
-                        </span>
-                        <span className="text-[10px] sm:text-xs text-slate-400">Best Rates</span>
-                      </div>
-                    </div>
-                    <SwapWrapper
-                      from={swapFromTokens}
-                      to={swapToTokens}
-                      experimental={{ useAggregator: true }}
-                      title=""
-                      onSwapComplete={handleSwapComplete}
-                    />
-                    <div className="mt-3 sm:mt-4 flex items-start gap-2 rounded-lg border border-white/5 bg-slate-950/50 p-2 sm:p-3">
-                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-cyan-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed">
-                        Rates are aggregated from multiple DEXs on Base. You always get the best available price.
-                      </p>
-                    </div>
+                  <div className="flex items-center justify-center">
+                    <ModernSwap />
                   </div>
 
                   <div className="space-y-3 sm:space-y-5">
