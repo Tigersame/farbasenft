@@ -15,6 +15,7 @@ import Favorites from "@/components/Favorites";
 import Portfolio from "@/components/Portfolio";
 import SearchFilters from "@/components/SearchFilters";
 import FarbaseMiniGallery from "@/components/FarbaseMiniGallery";
+import SwapPortalMobile from "@/components/SwapPortalMobile";
 
 const categoryStyles: Record<string, string> = {
   auction: "bg-purple-500/10 text-purple-200 ring-1 ring-purple-400/40",
@@ -68,6 +69,8 @@ export default function Page() {
         "farbasemint-gallery": "gallery",
         "mint": "mint",
         "nft-experience": "mint",
+        "swap": "swap",
+        "swap-portal": "swap",
         "profile": "profile",
       };
       
@@ -100,6 +103,7 @@ export default function Page() {
   // Default (null) shows all sections except dashboard
   const showDashboard = activeSection === "dashboard";
   const showGallery = activeSection === null || activeSection === "gallery";
+  const showSwap = activeSection === null || activeSection === "swap";
   const showNFTExperience = activeSection === null || activeSection === "nft-experience" || activeSection === "mint" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
   const showProfile = activeSection === null || activeSection === "profile" || !showDashboard;
   const showLeaderboard = activeSection === "leaderboard";
@@ -142,7 +146,12 @@ export default function Page() {
               </div>
             </section>
 
-            {/* Swap Portal removed for Mini App */}
+            {/* Swap Portal Mobile */}
+            {showSwap && (
+              <section id="swap" className="space-y-4">
+                <SwapPortalMobile onOpenExternal={(txHash) => window.open(`https://basescan.org/tx/${txHash}`, '_blank')} />
+              </section>
+            )}
 
             {/* NFT Experience section removed for Mini App */}
 
