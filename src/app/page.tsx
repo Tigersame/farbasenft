@@ -10,8 +10,6 @@ import { SwapWrapper } from "@/components/SwapWrapper";
 import { ModernSwap } from "@/components/ModernSwap";
 
 import { AppLayout } from "@/components/AppLayout";
-import { NFTActions } from "@/components/NFTActions";
-import { FarcasterShare } from "@/components/FarcasterShare";
 import { XPDisplay } from "@/components/XPDisplay";
 import { SBTClaim } from "@/components/SBTClaim";
 import { UserProfile } from "@/components/UserProfile";
@@ -153,7 +151,6 @@ export default function Page() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [pendingNFT, setPendingNFT] = useState<any>(null);
   const [showSearchFilters, setShowSearchFilters] = useState(false);
-  const [shareNFT, setShareNFT] = useState<any>(null);
   const { address, chainId } = useAccount();
 
   // Get tokens based on current chain
@@ -389,18 +386,6 @@ export default function Page() {
                             <p className="truncate text-[10px] sm:text-xs text-purple-300 font-medium">{drop.endsIn}</p>
                           </div>
                         </div>
-                        <div className="flex gap-1 sm:gap-1.5">
-                          <button 
-                            onClick={() => setShareNFT(drop)}
-                            className="flex-1 px-2 py-1.5 rounded-md bg-slate-800/50 hover:bg-slate-800 border border-slate-600 text-slate-300 hover:text-white transition" 
-                            title="Share on Farcaster"
-                          >
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                            </svg>
-                            <span className="ml-1 text-[10px] sm:text-xs">Share</span>
-                          </button>
-                        </div>
                       </div>
                     </div>
                   ))}
@@ -527,117 +512,6 @@ export default function Page() {
           </>
         )}
       </div>
-
-      {/* Share Modal */}
-      {shareNFT && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-linear-to-b from-slate-800 to-slate-900 rounded-xl p-4 max-w-sm w-full border border-slate-700 shadow-2xl relative">
-            {/* Close Button */}
-            <button
-              onClick={() => setShareNFT(null)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-white transition"
-              title="Close share modal"
-              aria-label="Close"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* NFT Preview */}
-            <div className="mb-4">
-              <h2 className="text-lg font-bold text-white mb-3">{shareNFT.title}</h2>
-              <div className="bg-slate-700 rounded-lg overflow-hidden mb-3">
-                <img
-                  src={shareNFT.image}
-                  alt={shareNFT.title}
-                  className="w-full h-32 object-cover"
-                />
-              </div>
-              <p className="text-xs text-slate-300">By {shareNFT.artist}</p>
-              {shareNFT.description && (
-                <p className="text-xs text-slate-400 mt-1.5 line-clamp-2">{shareNFT.description}</p>
-              )}
-            </div>
-
-            {/* Share URL */}
-            <div className="mb-4">
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Shareable Link
-              </label>
-              <div className="flex gap-1.5">
-                <input
-                  type="text"
-                  readOnly
-                  value={`${typeof window !== 'undefined' ? window.location.origin : ''}/nft/${shareNFT.id}`}
-                  className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-2.5 py-1.5 text-slate-300 text-xs truncate"
-                  title="Shareable link"
-                  placeholder="Share link"
-                  aria-label="Shareable link"
-                />
-                <button
-                  onClick={() => {
-                    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/nft/${shareNFT.id}`;
-                    navigator.clipboard.writeText(url);
-                    alert('Link copied to clipboard!');
-                  }}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition text-xs"
-                >
-                  Copy
-                </button>
-              </div>
-            </div>
-
-            {/* Share Message */}
-            <div className="mb-4">
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Share Message
-              </label>
-              <textarea
-                defaultValue={`Check out "${shareNFT.title}" by ${shareNFT.artist} on FarbaseNFT! 🎨`}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-2.5 py-1.5 text-slate-300 text-xs resize-none h-16"
-                title="Share message"
-                placeholder="Share message"
-                aria-label="Share message"
-              />
-            </div>
-
-            {/* Share Options */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/nft/${shareNFT.id}`;
-                  const text = `Check out "${shareNFT.title}" by ${shareNFT.artist} on FarbaseNFT! 🎨`;
-                  
-                  if (navigator.share) {
-                    navigator.share({
-                      title: shareNFT.title,
-                      text: text,
-                      url: url,
-                    });
-                  } else {
-                    // Fallback: copy to clipboard
-                    navigator.clipboard.writeText(`${text}\n${url}`);
-                    alert('Link copied to clipboard!');
-                  }
-                }}
-                className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 text-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Share
-              </button>
-              <button
-                onClick={() => setShareNFT(null)}
-                className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition text-sm"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </AppLayout>
   );
 }
