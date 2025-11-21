@@ -15,7 +15,6 @@ import { SBTClaim } from "@/components/SBTClaim";
 import { UserProfile } from "@/components/UserProfile";
 import { SIDEBAR_SECTION_EVENT } from "@/components/SidebarWithStore";
 import Dashboard from "@/components/Dashboard";
-import { curatorNotes, trendingDrops } from "@/data/nfts";
 import FarbaseMintNFTGallery from "@/components/FarbaseMintGallery";
 import Leaderboard from "@/components/Leaderboard";
 import Favorites from "@/components/Favorites";
@@ -202,7 +201,6 @@ export default function Page() {
         "mint": "mint",
         "nft-experience": "mint",
         "swap-portal": "swap",
-        "marketplace": "marketplace",
         "profile": "profile",
       };
       
@@ -264,8 +262,6 @@ export default function Page() {
   // Default (null) shows all sections except dashboard
   const showDashboard = activeSection === "dashboard";
   const showGallery = activeSection === null || activeSection === "gallery";
-  const showMarketplace = activeSection === null || activeSection === "marketplace";
-  const showCuratorNotes = activeSection === null;
   const showSwap = activeSection === null || activeSection === "swap";
   const showNFTExperience = activeSection === null || activeSection === "nft-experience" || activeSection === "mint" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
   const showFarbaseMintGallery = activeSection === null || activeSection === "gallery" || activeSection === "farbasemint-gallery";
@@ -339,76 +335,6 @@ export default function Page() {
             {showFarbaseMintGallery && (
               <section className="space-y-6" id="gallery">
                 <FarbaseMintNFTGallery initialTab="trending" />
-              </section>
-            )}
-
-            {/* Marketplace Section - Show on default or marketplace section */}
-            {showMarketplace && (
-              <section className="space-y-6" id="marketplace">
-                <SectionHeading
-                  eyebrow="Marketplace"
-                  title="Live & trending drops"
-                  description="Curate art-first auctions, reserve drops, and buy-now collections—all optimized for Base Account flows."
-                />
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-3 sm:gap-4">
-                  {trendingDrops.slice(0, 4).map((drop) => (
-                    <div
-                      key={drop.id}
-                      className="flex flex-col overflow-hidden rounded-xl border border-white/5 bg-slate-900/60 p-2 sm:p-3 hover:border-white/20 transition"
-                    >
-                      <div className="relative mx-auto h-[90px] w-[90px] shrink-0 overflow-hidden rounded-lg border border-white/10 sm:h-[120px] sm:w-[120px]">
-                        <Image
-                          src={drop.image}
-                          alt={drop.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 90px, 120px"
-                        />
-                        <span
-                          className={`absolute left-1.5 top-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold sm:left-2 sm:top-2 sm:px-2 ${categoryStyles[drop.category]}`}
-                        >
-                          {drop.category.replace('-', ' ')}
-                        </span>
-                      </div>
-                      <div className="mt-1.5 flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden sm:mt-2 sm:gap-1">
-                        <h3 className="truncate text-xs font-semibold text-white sm:text-sm">{drop.title}</h3>
-                        <p className="text-[10px] text-slate-400 sm:text-xs">{drop.artist}</p>
-                        <p className="line-clamp-1 text-[10px] text-slate-300 sm:text-xs">{drop.description}</p>
-                      </div>
-                      <div className="mt-auto space-y-1.5 sm:space-y-2">
-                        <div className="grid grid-cols-2 gap-1 text-xs text-slate-400 sm:gap-1.5">
-                          <div className="rounded-md border border-white/10 px-1.5 py-1 sm:px-2 sm:py-1 bg-slate-950/40">
-                            <p className="font-semibold text-white text-[10px] sm:text-xs">Reserve</p>
-                            <p className="truncate text-[10px] sm:text-xs text-cyan-300 font-medium">{drop.reserve}</p>
-                          </div>
-                          <div className="rounded-md border border-white/10 px-1.5 py-1 sm:px-2 sm:py-1 bg-slate-950/40">
-                            <p className="font-semibold text-white text-[10px] sm:text-xs">Ends In</p>
-                            <p className="truncate text-[10px] sm:text-xs text-purple-300 font-medium">{drop.endsIn}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Curator Notes - Show on default view only */}
-            {showCuratorNotes && (
-              <section className="space-y-5" id="curator-notes">
-                <SectionHeading
-                  eyebrow="Curation"
-                  title="Curator notes"
-                  description="Onboard collectors instantly—no wallet pop-ups, no email gates."
-                />
-                <div className="grid gap-6 md:grid-cols-3">
-                  {curatorNotes.map((note) => (
-                    <div key={note.title} className="rounded-2xl border border-white/5 bg-slate-900/60 p-5">
-                      <p className="text-sm font-semibold text-white">{note.title}</p>
-                      <p className="mt-3 text-sm text-slate-300">{note.body}</p>
-                    </div>
-                  ))}
-                </div>
               </section>
             )}
 
