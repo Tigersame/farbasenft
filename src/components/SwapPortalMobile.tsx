@@ -46,11 +46,11 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
 
   // Token list for Base chain - replace with TokenLists.org or onchain data in production
   const tokenList = useMemo(() => ([
-    {symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', decimals: 18, icon: '⟠'},
-    {symbol: 'USDC', address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', decimals: 6, icon: '💵'},
-    {symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18, icon: '⟠'},
-    {symbol: 'DAI', address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', decimals: 18, icon: '◈'},
-    {symbol: 'DEGEN', address: '0x4ed4e862860bed51a9570b96d89af5e1b0efefed', decimals: 18, icon: '🎩'},
+    {symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', decimals: 18, icon: '\u{29E0}'},
+    {symbol: 'USDC', address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', decimals: 6, icon: '\u{1F4B5}'},
+    {symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18, icon: '\u{29E0}'},
+    {symbol: 'DAI', address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', decimals: 18, icon: '\u{25C8}'},
+    {symbol: 'DEGEN', address: '0x4ed4e862860bed51a9570b96d89af5e1b0efefed', decimals: 18, icon: '\u{1F3A9}'},
   ]), []);
 
   // Fetch balance for fromToken
