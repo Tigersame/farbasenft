@@ -62,11 +62,12 @@ export function BottomNavigation() {
 
   const handleClick = (itemId: string, href: string) => {
     setActiveItem(itemId);
-    if (href.startsWith("#")) {
-      // Handle hash navigation
-      const element = document.querySelector(href);
+    if (href.startsWith("/#")) {
+      // Handle hash navigation - remove leading /
+      const hash = href.substring(1);
+      const element = document.querySelector(hash);
       if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
   };

@@ -489,6 +489,13 @@ export function NFTActions() {
         </p>
         <Link
           href="#swap-portal"
+          onClick={(e) => {
+            e.preventDefault();
+            const element = document.getElementById("swap-portal");
+            if (element) {
+              element.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }}
           className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
         >
           Open swap portal

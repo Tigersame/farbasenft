@@ -203,7 +203,8 @@ export default function Page() {
         "dashboard": "dashboard",
         "": "gallery",
         "gallery": "gallery",
-        "farbasemint-gallery": "farbasemint-gallery",
+        "farbasemint-gallery": "gallery",
+        "mint": "nft-experience",
         "nft-experience": "nft-experience",
         "swap-portal": "swap",
         "marketplace": "marketplace",
@@ -340,7 +341,7 @@ export default function Page() {
 
             {/* FarbaseMint NFT Gallery - Toggle with farbasemint-gallery section */}
             {showFarbaseMintGallery && (
-              <section className="space-y-6" id="farbasemint-gallery">
+              <section className="space-y-6" id="gallery">
                 <FarbaseMintNFTGallery initialTab="trending" />
               </section>
             )}
@@ -391,7 +392,16 @@ export default function Page() {
                         </div>
                         <div className="flex gap-1 sm:gap-1.5">
                           <button 
-                            onClick={() => setActiveSection("buy")}
+                            onClick={() => {
+                              setActiveSection("buy");
+                              // Scroll to mint section
+                              setTimeout(() => {
+                                const element = document.getElementById("mint");
+                                if (element) {
+                                  element.scrollIntoView({ behavior: "smooth", block: "start" });
+                                }
+                              }, 100);
+                            }}
                             className="flex-1 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 px-2 py-1.5 text-[10px] font-semibold text-emerald-300 transition sm:text-xs"
                           >
                             Buy
@@ -515,7 +525,7 @@ export default function Page() {
 
             {/* NFT Experience - Show for buy/sell/listings or when viewing NFT section */}
             {showNFTExperience && (
-              <section className="space-y-5" id="nft-experience">
+              <section className="space-y-5" id="mint">
                 <SectionHeading
                   eyebrow="Sell · Collect"
                   title="Manage NFTs end-to-end inside farbasenft"
