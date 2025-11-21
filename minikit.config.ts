@@ -17,15 +17,15 @@ export const minikitConfig = {
       }
     : undefined,
   miniapp: {
-    version: "1",
+    version: "1.1",
     // REQUIRED: Clear, descriptive app name for discovery
     name: "farbasenft",
-    subtitle: "Digital art reimagined",
+    subtitle: "NFT Gallery & Swap Portal",
     
     // REQUIRED: Detailed description for search indexing
     // Must be clear about what the app does for users
     description:
-      "Discover and collect unique NFTs on Base blockchain. Create digital art, trade in curated marketplaces, earn XP rewards, and claim exclusive soulbound tokens. Foundation-inspired design with seamless Farcaster integration.",
+      "Discover and collect unique NFTs on Base blockchain with virtualized gallery. Swap tokens seamlessly using 0x API integration. Earn XP rewards and claim exclusive soulbound tokens. Mobile-first design optimized for Farcaster Mini Apps.",
     
     screenshotUrls: [
       `${ROOT_URL}/splash.svg`,
