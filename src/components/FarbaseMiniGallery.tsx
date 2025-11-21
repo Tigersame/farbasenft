@@ -122,10 +122,10 @@ function Modal({ open, onClose, children, title }: ModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full md:max-w-lg bg-[#07101a] rounded-t-2xl md:rounded-2xl p-4 m-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
-          <button onClick={onClose} className="text-gray-300 text-xl">✕</button>
+      <div className="relative w-full md:max-w-lg bg-[#07101a] rounded-t-2xl md:rounded-2xl p-6 pb-8 mx-4 mb-20 md:mb-4 max-h-[75vh] overflow-y-auto shadow-2xl">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-white">{title}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl leading-none p-1" aria-label="Close modal">✕</button>
         </div>
         <div>{children}</div>
       </div>
@@ -175,56 +175,61 @@ function CreateForm({ onDone }: CreateFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block">
-        <div className="text-sm text-gray-300 mb-1">Name</div>
+        <div className="text-sm font-medium text-gray-300 mb-2">Name</div>
         <input 
           value={name} 
           onChange={(e) => setName(e.target.value)} 
-          className="w-full rounded-lg p-2 bg-[#07121a] border border-[#1a2436] text-white text-sm" 
+          className="w-full rounded-lg p-3 bg-[#0b1722] border border-[#1f2937] text-white text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" 
+          placeholder="Enter NFT name"
           required
         />
       </label>
 
       <label className="block">
-        <div className="text-sm text-gray-300 mb-1">Collection</div>
+        <div className="text-sm font-medium text-gray-300 mb-2">Collection</div>
         <input 
           value={collection} 
           onChange={(e) => setCollection(e.target.value)} 
-          className="w-full rounded-lg p-2 bg-[#07121a] border border-[#1a2436] text-white text-sm" 
+          className="w-full rounded-lg p-3 bg-[#0b1722] border border-[#1f2937] text-white text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" 
+          placeholder="Collection name"
           required
         />
       </label>
 
       <label className="block">
-        <div className="text-sm text-gray-300 mb-1">Image</div>
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={handleFile} 
-          className="w-full text-sm text-gray-300" 
-          required
-        />
+        <div className="text-sm font-medium text-gray-300 mb-2">Image</div>
+        <div className="relative">
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={handleFile} 
+            className="w-full p-3 bg-[#0b1722] border border-[#1f2937] rounded-lg text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:cursor-pointer hover:file:bg-blue-700" 
+            required
+          />
+        </div>
       </label>
 
       <label className="block">
-        <div className="text-sm text-gray-300 mb-1">Price (ETH)</div>
+        <div className="text-sm font-medium text-gray-300 mb-2">Price (ETH)</div>
         <input 
           value={price} 
           onChange={(e) => setPrice(e.target.value)} 
-          className="w-full rounded-lg p-2 bg-[#07121a] border border-[#1a2436] text-white text-sm" 
+          className="w-full rounded-lg p-3 bg-[#0b1722] border border-[#1f2937] text-white text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" 
           type="number"
           step="0.001"
           min="0"
+          placeholder="0.001"
           required
         />
       </label>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-2">
         <button 
           type="submit" 
           disabled={uploading} 
-          className="px-4 py-2 bg-blue-600 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
+          className="min-w-[120px] px-6 py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-lg text-base font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {uploading ? 'Uploading…' : 'Create'}
         </button>
@@ -465,10 +470,10 @@ export default function FarbaseMiniGallery() {
       {/* toast */}
       {toast && (
         <div className={clsx(
-          'fixed left-1/2 -translate-x-1/2 bottom-6 px-4 py-2 rounded-xl shadow-lg z-50',
-          toast.type === 'error' ? 'bg-red-600' : 'bg-green-600'
+          'fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-6 px-5 py-3 rounded-xl shadow-xl z-50 backdrop-blur-sm',
+          toast.type === 'error' ? 'bg-red-600/95' : 'bg-green-600/95'
         )}>
-          <div className="text-sm text-white">{toast.message}</div>
+          <div className="text-sm font-medium text-white">{toast.message}</div>
         </div>
       )}
     </div>
