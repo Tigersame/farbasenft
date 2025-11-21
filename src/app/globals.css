@@ -199,6 +199,106 @@ div:has([data-onchainkit-swap]) > div,
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* OnchainKit Transaction Modal Styling */
+[data-onchainkit-transaction],
+[data-onchainkit-transaction] * {
+  --ok-color-background: #0f172a !important;
+  --ok-color-foreground: #f1f5f9 !important;
+  --ok-color-border: rgba(255, 255, 255, 0.1) !important;
+  --ok-color-surface: #1e293b !important;
+}
+
+/* Transaction modal portal */
+[data-onchainkit-transaction] [data-radix-portal] > div,
+div[role="dialog"]:has([data-onchainkit-transaction]) {
+  background: rgba(0, 0, 0, 0.5) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  backdrop-filter: blur(4px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+}
+
+/* Transaction dialog content */
+[data-onchainkit-transaction] [role="dialog"],
+div[role="dialog"]:has([class*="transaction"]),
+div[role="dialog"]:has([class*="Transaction"]) {
+  background: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  max-width: 90vw !important;
+  max-height: 85vh !important;
+  width: 100% !important;
+  overflow-y: auto !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Transaction modal content wrapper */
+[data-onchainkit-transaction] [class*="content"],
+[data-onchainkit-transaction] [class*="Content"],
+div[role="dialog"]:has([class*="transaction"]) > div,
+div[role="dialog"]:has([class*="Transaction"]) > div {
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+  padding: 20px !important;
+  overflow-y: auto !important;
+}
+
+/* Transaction status text */
+[data-onchainkit-transaction] p,
+[data-onchainkit-transaction] span,
+[data-onchainkit-transaction] label,
+[data-onchainkit-transaction] h1,
+[data-onchainkit-transaction] h2,
+[data-onchainkit-transaction] h3,
+[data-onchainkit-transaction] div {
+  color: #f1f5f9 !important;
+}
+
+/* Transaction buttons */
+[data-onchainkit-transaction] button {
+  min-height: 48px !important;
+  padding: 12px 20px !important;
+  font-size: 14px !important;
+  border-radius: 12px !important;
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+[data-onchainkit-transaction] button:hover {
+  background: #2563eb !important;
+}
+
+/* Mobile-specific Transaction modal adjustments */
+@media (max-width: 768px) {
+  [data-onchainkit-transaction] [role="dialog"],
+  div[role="dialog"]:has([class*="transaction"]),
+  div[role="dialog"]:has([class*="Transaction"]) {
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    margin: 8px !important;
+  }
+
+  [data-onchainkit-transaction] [class*="content"],
+  div[role="dialog"]:has([class*="transaction"]) > div {
+    padding: 16px !important;
+    font-size: 14px !important;
+  }
+
+  [data-onchainkit-transaction] button {
+    width: 100% !important;
+    min-height: 50px !important;
+    font-size: 15px !important;
+  }
+
+  /* Ensure scrolling works on mobile */
+  [data-onchainkit-transaction] [role="dialog"] {
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
 /* COMPREHENSIVE SWAP PORTAL DARK MODE - Force all elements to dark */
 #swap-portal {
   background: #0f172a !important;
