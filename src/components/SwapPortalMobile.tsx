@@ -121,11 +121,16 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
   useEffect(() => {
     if (!fromAmount || isNaN(Number(fromAmount)) || Number(fromAmount) <= 0) {
       setToAmount('');
+      setPriceImpact(null);
+      setError(null);
       return;
     }
-    const tid = setTimeout(() => fetchQuoteZeroX(fromToken.address, toToken.address, fromAmount), 420);
+    const tid = setTimeout(() => {
+      fetchQuoteZeroX(fromToken.address, toToken.address, fromAmount);
+    }, 420);
     return () => clearTimeout(tid);
-  }, [fromAmount, fromToken, toToken, slippage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromAmount, fromToken.address, toToken.address, fromToken.decimals, toToken.decimals, slippage]);
 
   // --- Wallet Connect (using Wagmi) ---
   const connectWallet = async () => {
@@ -264,7 +269,7 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
           />
 
           <div className="flex items-center gap-2 bg-[#0b1220] px-3 py-2 rounded-xl cursor-pointer hover:bg-[#0f1720] transition-colors" onClick={() => openTokenSelector('from')}>
-            {fromToken.icon && <span className="text-lg">{fromToken.icon}</span>}
+            <span className="text-lg" style={{fontFamily: 'system-ui, sans-serif'}}>{fromToken.icon || '○'}</span>
             <div className="text-sm font-semibold">{fromToken.symbol}</div>
             <span className="text-xs opacity-60">▼</span>
           </div>
@@ -288,21 +293,23 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
           />
 
           <div className="flex items-center gap-2 bg-[#0b1220] px-3 py-2 rounded-xl cursor-pointer hover:bg-[#0f1720] transition-colors" onClick={() => openTokenSelector('to')}>
-            {toToken.icon && <span className="text-lg">{toToken.icon}</span>}
+            <span className="text-lg" style={{fontFamily: 'system-ui, sans-serif'}}>{toToken.icon || '○'}</span>
             <div className="text-sm font-semibold">{toToken.symbol}</div>
             <span className="text-xs opacity-60">▼</span>
           </div>
         </div>
 
         {/* Quote / warnings */}
-        <div className="flex flex-col gap-1 text-xs opacity-70">
-          {loadingQuote ? <div>Fetching quote…</div> : (
+        <div className="flex flex-col gap-1 text-xs">
+          {loadingQuote ? (
+            <div className="opacity-70">Fetching quote…</div>
+          ) : (
             <>
-              <div>Price impact: {priceImpact != null ? `${(priceImpact*100).toFixed(2)}%` : '—'}</div>
-              <div>Slippage tolerance: {slippage}%</div>
+              <div className="opacity-70">Price impact: {priceImpact != null ? `${(priceImpact*100).toFixed(2)}%` : '—'}</div>
+              <div className="opacity-70">Slippage tolerance: {slippage}%</div>
             </>
           )}
-          {error && <div className="text-red-400">{error}</div>}
+          {error && <div className="text-red-400 font-medium mt-1">⚠️ {error}</div>}
         </div>
 
         <div className="flex gap-2">
@@ -375,7 +382,7 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
                   onClick={() => pickToken(tok)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-md bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-base">
+                    <div className="w-8 h-8 rounded-md bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-base" style={{fontFamily: 'system-ui, sans-serif'}}>
                       {tok.icon || tok.symbol[0]}
                     </div>
                     <div className="text-left">
