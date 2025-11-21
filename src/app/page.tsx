@@ -14,7 +14,6 @@ import { NFTActions } from "@/components/NFTActions";
 import { FarcasterShare } from "@/components/FarcasterShare";
 import { XPDisplay } from "@/components/XPDisplay";
 import { SBTClaim } from "@/components/SBTClaim";
-import { NFTSellModal } from "@/components/NFTSellModal";
 import { UserProfile } from "@/components/UserProfile";
 import { SIDEBAR_SECTION_EVENT } from "@/components/SidebarWithStore";
 import Dashboard from "@/components/Dashboard";
@@ -155,7 +154,6 @@ export default function Page() {
   const [pendingNFT, setPendingNFT] = useState<any>(null);
   const [showSearchFilters, setShowSearchFilters] = useState(false);
   const [shareNFT, setShareNFT] = useState<any>(null);
-  const [sellNFT, setSellNFT] = useState<any>(null);
   const { address, chainId } = useAccount();
 
   // Get tokens based on current chain
@@ -393,19 +391,14 @@ export default function Page() {
                         </div>
                         <div className="flex gap-1 sm:gap-1.5">
                           <button 
-                            onClick={() => setSellNFT(drop)}
-                            className="flex-1 rounded-md bg-orange-500/20 hover:bg-orange-500/30 border border-orange-400/50 px-2 py-1.5 text-[10px] font-semibold text-orange-300 transition sm:text-xs"
-                          >
-                            Sell
-                          </button>
-                          <button 
                             onClick={() => setShareNFT(drop)}
-                            className="flex-1 px-1.5 py-1.5 rounded-md bg-slate-800/50 hover:bg-slate-800 border border-slate-600 text-slate-300 hover:text-white transition sm:px-2" 
+                            className="flex-1 px-2 py-1.5 rounded-md bg-slate-800/50 hover:bg-slate-800 border border-slate-600 text-slate-300 hover:text-white transition" 
                             title="Share on Farcaster"
                           >
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-3 h-3 sm:w-4 sm:h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                             </svg>
+                            <span className="ml-1 text-[10px] sm:text-xs">Share</span>
                           </button>
                         </div>
                       </div>
@@ -534,11 +527,6 @@ export default function Page() {
           </>
         )}
       </div>
-
-      {/* NFT Sell Modal */}
-      {sellNFT && (
-        <NFTSellModal nft={sellNFT} onClose={() => setSellNFT(null)} />
-      )}
 
       {/* Share Modal */}
       {shareNFT && (
