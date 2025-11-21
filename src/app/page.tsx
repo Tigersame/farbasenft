@@ -19,7 +19,6 @@ import Leaderboard from "@/components/Leaderboard";
 import Favorites from "@/components/Favorites";
 import Portfolio from "@/components/Portfolio";
 import SearchFilters from "@/components/SearchFilters";
-import { FarbaseBanner } from "@/components/FarbaseBanner";
 
 const categoryStyles: Record<string, string> = {
   auction: "bg-purple-500/10 text-purple-200 ring-1 ring-purple-400/40",
@@ -270,39 +269,7 @@ export default function Page() {
 
   return (
     <AppLayout>
-      <FarbaseBanner />
       <div className="mx-auto w-full max-w-7xl space-y-10 px-6 py-12 sm:px-8 lg:px-10">
-        {/* Farbase Hero Banner */}
-        <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-blue-950 via-blue-900 to-blue-950 p-12 shadow-2xl">
-          {/* Decorative gradient overlay */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute inset-0 bg-linear-to-br from-cyan-500/20 to-transparent"></div>
-            <div className="absolute inset-0 bg-linear-to-tr from-purple-500/20 to-transparent"></div>
-          </div>
-          
-          {/* Content */}
-          <div className="relative z-10 space-y-4">
-            <h1 className="text-5xl font-bold text-white md:text-6xl">Farbase</h1>
-            <p className="max-w-2xl text-xl text-slate-100 md:text-2xl">
-              A next-gen NFT marketplace built on Base with seamless Farcaster integration
-            </p>
-            <div className="flex flex-wrap gap-3 pt-4">
-              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-200">
-                <span className="inline-block h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                Live on Base
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-400/10 px-4 py-2 text-sm font-medium text-purple-200">
-                <span className="inline-block h-2 w-2 rounded-full bg-purple-400"></span>
-                Multi-chain Ready
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
-                Farcaster Native
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* Dashboard Section - Full page, hides other content */}
         {showDashboard && (
           <section id="dashboard" className="space-y-6">
