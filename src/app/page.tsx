@@ -393,21 +393,6 @@ export default function Page() {
                         </div>
                         <div className="flex gap-1 sm:gap-1.5">
                           <button 
-                            onClick={() => {
-                              setActiveSection("buy");
-                              // Scroll to mint section
-                              setTimeout(() => {
-                                const element = document.getElementById("mint");
-                                if (element) {
-                                  element.scrollIntoView({ behavior: "smooth", block: "start" });
-                                }
-                              }, 100);
-                            }}
-                            className="flex-1 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 px-2 py-1.5 text-[10px] font-semibold text-emerald-300 transition sm:text-xs"
-                          >
-                            Buy
-                          </button>
-                          <button 
                             onClick={() => setSellNFT(drop)}
                             className="flex-1 rounded-md bg-orange-500/20 hover:bg-orange-500/30 border border-orange-400/50 px-2 py-1.5 text-[10px] font-semibold text-orange-300 transition sm:text-xs"
                           >
@@ -415,7 +400,7 @@ export default function Page() {
                           </button>
                           <button 
                             onClick={() => setShareNFT(drop)}
-                            className="px-1.5 py-1.5 rounded-md bg-slate-800/50 hover:bg-slate-800 border border-slate-600 text-slate-300 hover:text-white transition sm:px-2" 
+                            className="flex-1 px-1.5 py-1.5 rounded-md bg-slate-800/50 hover:bg-slate-800 border border-slate-600 text-slate-300 hover:text-white transition sm:px-2" 
                             title="Share on Farcaster"
                           >
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -524,17 +509,7 @@ export default function Page() {
               </section>
             )}
 
-            {/* NFT Experience - Show for buy/sell/listings or when viewing NFT section */}
-            {showNFTExperience && (
-              <section className="space-y-5" id="mint">
-                <SectionHeading
-                  eyebrow="Sell · Collect"
-                  title="Manage NFTs end-to-end inside farbasenft"
-                  description="Connect a wallet, resolve Basenames, and interact with your marketplace contracts without leaving the mini app."
-                />
-                <NFTActions />
-              </section>
-            )}
+            {/* NFT Experience section removed for Mini App */}
 
             {/* Leaderboard Section */}
             {showLeaderboard && (
