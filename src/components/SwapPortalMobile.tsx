@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi';
 import { Avatar, Name } from '@coinbase/onchainkit/identity';
 
 // Enhanced SwapPortal_Mobile_MiniApp
@@ -14,6 +14,7 @@ interface Token {
   symbol: string;
   decimals: number;
   address: string;
+  icon?: string;
 }
 
 interface SwapPortalMobileProps {
@@ -45,12 +46,21 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
 
   // Token list for Base chain - replace with TokenLists.org or onchain data in production
   const tokenList = useMemo(() => ([
-    {symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', decimals: 18},
-    {symbol: 'USDC', address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', decimals: 6},
-    {symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18},
-    {symbol: 'DAI', address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', decimals: 18},
-    {symbol: 'DEGEN', address: '0x4ed4e862860bed51a9570b96d89af5e1b0efefed', decimals: 18},
+    {symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', decimals: 18, icon: '⟠'},
+    {symbol: 'USDC', address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', decimals: 6, icon: '💵'},
+    {symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18, icon: '⟠'},
+    {symbol: 'DAI', address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', decimals: 18, icon: '◈'},
+    {symbol: 'DEGEN', address: '0x4ed4e862860bed51a9570b96d89af5e1b0efefed', decimals: 18, icon: '🎩'},
   ]), []);
+
+  // Fetch balance for fromToken
+  const { data: balanceData } = useBalance({
+    address: address as `0x${string}` | undefined,
+    token: fromToken.address === '0x0000000000000000000000000000000000000000' 
+      ? undefined 
+      : fromToken.address as `0x${string}`,
+    chainId: 8453, // Base mainnet
+  });
 
   // Filtered token list based on search
   const filteredTokens = useMemo(() => {
@@ -231,7 +241,17 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
       <div className="bg-[#0f1720] rounded-2xl p-4 shadow-md flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="text-xs opacity-70">From</div>
-          <div className="text-xs opacity-70">Balance: {isConnected ? '…' : '—'}</div>
+          <div className="text-xs opacity-70">
+            Balance: {isConnected ? (
+              balanceData ? (
+                <span className="font-medium text-cyan-400">
+                  {parseFloat(balanceData.formatted).toFixed(6)} {balanceData.symbol}
+                </span>
+              ) : (
+                <span className="animate-pulse">Loading...</span>
+              )
+            ) : '—'}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -243,9 +263,10 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
             className="flex-1 bg-transparent outline-none text-2xl font-semibold"
           />
 
-          <div className="flex items-center gap-2 bg-[#0b1220] px-3 py-2 rounded-xl">
+          <div className="flex items-center gap-2 bg-[#0b1220] px-3 py-2 rounded-xl cursor-pointer hover:bg-[#0f1720] transition-colors" onClick={() => openTokenSelector('from')}>
+            {fromToken.icon && <span className="text-lg">{fromToken.icon}</span>}
             <div className="text-sm font-semibold">{fromToken.symbol}</div>
-            <button onClick={() => openTokenSelector('from')} className="text-xs opacity-60">▼</button>
+            <span className="text-xs opacity-60">▼</span>
           </div>
         </div>
 
@@ -266,9 +287,10 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
             className="flex-1 bg-transparent outline-none text-2xl font-semibold opacity-80"
           />
 
-          <div className="flex items-center gap-2 bg-[#0b1220] px-3 py-2 rounded-xl">
+          <div className="flex items-center gap-2 bg-[#0b1220] px-3 py-2 rounded-xl cursor-pointer hover:bg-[#0f1720] transition-colors" onClick={() => openTokenSelector('to')}>
+            {toToken.icon && <span className="text-lg">{toToken.icon}</span>}
             <div className="text-sm font-semibold">{toToken.symbol}</div>
-            <button onClick={() => openTokenSelector('to')} className="text-xs opacity-60">▼</button>
+            <span className="text-xs opacity-60">▼</span>
           </div>
         </div>
 
@@ -353,11 +375,11 @@ export default function SwapPortalMobile({ onOpenExternal }: SwapPortalMobilePro
                   onClick={() => pickToken(tok)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-md bg-slate-700 flex items-center justify-center text-xs font-semibold">
-                      {tok.symbol[0]}
+                    <div className="w-8 h-8 rounded-md bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-base">
+                      {tok.icon || tok.symbol[0]}
                     </div>
                     <div className="text-left">
-                      <div className="text-sm">{tok.symbol}</div>
+                      <div className="text-sm font-medium">{tok.symbol}</div>
                       <div className="text-xs opacity-60">{shortAddr(tok.address)}</div>
                     </div>
                   </div>
