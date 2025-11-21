@@ -199,7 +199,7 @@ export default function Page() {
       const hash = window.location.hash.slice(1); // Remove # prefix
       
       // Map hashes to section names
-      const hashMap: Record<string, string> = {
+      const hashMap: Record<string, string | null> = {
         "dashboard": "dashboard",
         "": null,
         "gallery": "gallery",
