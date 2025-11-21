@@ -19,6 +19,7 @@ import Leaderboard from "@/components/Leaderboard";
 import Favorites from "@/components/Favorites";
 import Portfolio from "@/components/Portfolio";
 import SearchFilters from "@/components/SearchFilters";
+import FarbaseMiniGallery from "@/components/FarbaseMiniGallery";
 
 const categoryStyles: Record<string, string> = {
   auction: "bg-purple-500/10 text-purple-200 ring-1 ring-purple-400/40",
@@ -281,6 +282,13 @@ export default function Page() {
         {/* All other content hidden when dashboard is active */}
         {!showDashboard && (
           <>
+            {/* Gallery Section - FarbaseMiniGallery */}
+            {showGallery && (
+              <section id="gallery" className="space-y-4">
+                <FarbaseMiniGallery />
+              </section>
+            )}
+
             {/* User Profile - Always visible when not on Dashboard */}
             {showProfile && (
               <section id="profile" className="space-y-4">

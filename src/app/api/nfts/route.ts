@@ -135,6 +135,8 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const tab = searchParams.get('tab') || 'trending';
+    const cursor = searchParams.get('cursor');
+    const limit = 20;
 
     // Filter by category
     let filteredNFTs = mockNFTs;
@@ -147,6 +149,21 @@ export async function GET(request: NextRequest) {
       filteredNFTs = [...mockNFTs].sort((a, b) => b.likes - a.likes);
     }
 
+    // Cursor pagination
+    let startIndex = 0;
+    if (cursor) {
+      const cursorIndex = filteredNFTs.findIndex((nft) => nft.id === cursor);
+      if (cursorIndex !== -1) {
+        startIndex = cursorIndex + 1;
+      }
+    }
+
+    // Paginate
+    const items = filteredNFTs.slice(startIndex, startIndex + limit);
+    const nextCursor = items.length === limit && startIndex + limit < filteredNFTs.length 
+      ? items[items.length - 1].id 
+      : null;
+
     // Use 10-minute cache to prevent rate limiting
     const cacheHeaders = {
       'Cache-Control': 'public, max-age=600, s-maxage=600', // 10 minutes
@@ -154,13 +171,52 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json({
-      items: filteredNFTs,
+      items,
+      nextCursor,
       success: true,
     }, { headers: cacheHeaders });
   } catch (error) {
     console.error('Error fetching NFTs:', error);
     return NextResponse.json(
       { error: 'Failed to fetch NFTs', success: false },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/nfts - Create new NFT
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { name, collection, image, price } = body;
+
+    if (!name || !collection || !image) {
+      return NextResponse.json(
+        { error: 'Missing required fields: name, collection, image' },
+        { status: 400 }
+      );
+    }
+
+    const newNFT = {
+      tokenId: String(Date.now()),
+      id: String(Date.now()),
+      title: name,
+      name,
+      image,
+      collection,
+      creator: 'User',
+      price: price || '0.001',
+      likes: 0,
+      category: 'new',
+    };
+
+    mockNFTs.push(newNFT);
+
+    return NextResponse.json({ success: true, nft: newNFT });
+  } catch (error) {
+    console.error('Error creating NFT:', error);
+    return NextResponse.json(
+      { error: 'Failed to create NFT' },
       { status: 500 }
     );
   }
