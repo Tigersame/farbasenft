@@ -17,7 +17,7 @@ export const minikitConfig = {
       }
     : undefined,
   miniapp: {
-    version: "1.2",
+    version: "1.3",
     // REQUIRED: Clear, descriptive app name for discovery
     name: "farbasenft",
     subtitle: "NFT Gallery & Swap Portal",
