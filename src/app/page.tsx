@@ -201,13 +201,14 @@ export default function Page() {
       // Map hashes to section names
       const hashMap: Record<string, string> = {
         "dashboard": "dashboard",
-        "": "gallery",
+        "": null,
         "gallery": "gallery",
         "farbasemint-gallery": "gallery",
-        "mint": "nft-experience",
-        "nft-experience": "nft-experience",
+        "mint": "mint",
+        "nft-experience": "mint",
         "swap-portal": "swap",
         "marketplace": "marketplace",
+        "profile": "profile",
       };
       
       const section = hashMap[hash] || null;
@@ -271,9 +272,9 @@ export default function Page() {
   const showMarketplace = activeSection === null || activeSection === "marketplace";
   const showCuratorNotes = activeSection === null;
   const showSwap = activeSection === null || activeSection === "swap";
-  const showNFTExperience = activeSection === null || activeSection === "nft-experience" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
-  const showFarbaseMintGallery = activeSection === null || activeSection === "farbasemint-gallery";
-  const showProfile = activeSection === null || !showDashboard;
+  const showNFTExperience = activeSection === null || activeSection === "nft-experience" || activeSection === "mint" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
+  const showFarbaseMintGallery = activeSection === null || activeSection === "gallery" || activeSection === "farbasemint-gallery";
+  const showProfile = activeSection === null || activeSection === "profile" || !showDashboard;
   const showLeaderboard = activeSection === "leaderboard";
   const showFavorites = activeSection === "favorites";
   const showPortfolio = activeSection === "portfolio";
