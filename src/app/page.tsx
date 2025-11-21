@@ -15,7 +15,6 @@ import { SBTClaim } from "@/components/SBTClaim";
 import { UserProfile } from "@/components/UserProfile";
 import { SIDEBAR_SECTION_EVENT } from "@/components/SidebarWithStore";
 import Dashboard from "@/components/Dashboard";
-import FarbaseMintNFTGallery from "@/components/FarbaseMintGallery";
 import Leaderboard from "@/components/Leaderboard";
 import Favorites from "@/components/Favorites";
 import Portfolio from "@/components/Portfolio";
@@ -264,7 +263,6 @@ export default function Page() {
   const showGallery = activeSection === null || activeSection === "gallery";
   const showSwap = activeSection === null || activeSection === "swap";
   const showNFTExperience = activeSection === null || activeSection === "nft-experience" || activeSection === "mint" || activeSection === "buy" || activeSection === "sell" || activeSection === "listings";
-  const showFarbaseMintGallery = activeSection === null || activeSection === "gallery" || activeSection === "farbasemint-gallery";
   const showProfile = activeSection === null || activeSection === "profile" || !showDashboard;
   const showLeaderboard = activeSection === "leaderboard";
   const showFavorites = activeSection === "favorites";
@@ -330,13 +328,6 @@ export default function Page() {
                 <SBTClaim />
               </div>
             </section>
-
-            {/* FarbaseMint NFT Gallery - Toggle with farbasemint-gallery section */}
-            {showFarbaseMintGallery && (
-              <section className="space-y-6" id="gallery">
-                <FarbaseMintNFTGallery initialTab="trending" />
-              </section>
-            )}
 
             {/* Swap Portal - Show on default or swap section */}
             {showSwap && (
